@@ -1,0 +1,95 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.8577, 22.7196]
+      },
+      "properties": {
+        "station_id": "STN101",
+        "station_name": "Narmada Basin - Hoshangabad",
+        "region": "Narmada Basin",
+        "risk_zone": "High",
+        "river_level_m": 6.15,
+        "rainfall_mm": 54.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.8245, 20.4625]
+      },
+      "properties": {
+        "station_id": "STN102",
+        "station_name": "Mahanadi Basin - Cuttack",
+        "region": "Mahanadi Basin",
+        "risk_zone": "Critical",
+        "river_level_m": 7.85,
+        "rainfall_mm": 86.4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.2090, 28.6139]
+      },
+      "properties": {
+        "station_id": "STN103",
+        "station_name": "Yamuna Basin - Delhi Outflow",
+        "region": "Yamuna Basin",
+        "risk_zone": "Moderate",
+        "river_level_m": 4.65,
+        "rainfall_mm": 28.5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.6856, 10.7905]
+      },
+      "properties": {
+        "station_id": "STN104",
+        "station_name": "Kaveri Basin - Tiruchirappalli",
+        "region": "Kaveri Basin",
+        "risk_zone": "Low",
+        "river_level_m": 2.10,
+        "rainfall_mm": 11.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [72.8311, 21.1702]
+      },
+      "properties": {
+        "station_id": "STN105",
+        "station_name": "Tapti Basin - Surat Ukai",
+        "region": "Tapti Basin",
+        "risk_zone": "High",
+        "river_level_m": 5.95,
+        "rainfall_mm": 49.0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [74.8723, 31.6340]
+      },
+      "properties": {
+        "station_id": "STN106",
+        "station_name": "Beas Basin - Harike Barrage",
+        "region": "Indus Basin",
+        "risk_zone": "Low",
+        "river_level_m": 1.85,
+        "rainfall_mm": 8.0
+      }
+    }
+  ]
+}

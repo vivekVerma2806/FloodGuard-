@@ -135,28 +135,60 @@ def main():
         risk_col = TARGET_CLASSIFICATION
 
     else:
+        sample_custom_path = os.path.join(DATA_DIR, "sample_custom_upload.geojson")
+        col_up_btn, col_down_btn = st.columns([1, 1])
+        with col_up_btn:
+            btn_load_sample = st.button("Load Included Sample Custom GeoJSON (6 Basins)")
+        with col_down_btn:
+            if os.path.exists(sample_custom_path):
+                with open(sample_custom_path, "r", encoding="utf-8") as f_samp:
+                    st.download_button(
+                        "Download Sample Custom GeoJSON File",
+                        data=f_samp.read(),
+                        file_name="sample_custom_upload.geojson",
+                        mime="application/geo+json",
+                    )
+
         uploaded = st.file_uploader("Upload custom GeoJSON archive", type=["geojson", "json"])
-        if uploaded is None:
-            editorial_callout("Select or drop a standard GeoJSON file containing coordinate features.", level="info")
-            return
-        try:
-            tmp = os.path.join(DATA_DIR, "_uploaded.geojson")
-            with open(tmp, "wb") as f:
-                f.write(uploaded.read())
-            gdf = load_geojson(tmp)
-            render_html(
-                f"""
-                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#2E6930;
-                            padding:0.4rem 0.6rem;background:#F0FDF4;border:1px solid #BBF7D0;margin-bottom:1rem;">
-                    CUSTOM INGESTION: {len(gdf)} GEOSPATIAL FEATURES PARSED
-                </div>
-                """
-            )
-        except Exception as e:
-            st.error(f"Error reading uploaded GeoJSON: {e}")
+
+        if btn_load_sample or "loaded_custom_sample" in st.session_state:
+            st.session_state["loaded_custom_sample"] = True
+            try:
+                gdf = load_geojson(sample_custom_path)
+                render_html(
+                    f"""
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#2E6930;
+                                padding:0.4rem 0.6rem;background:#F0FDF4;border:1px solid #BBF7D0;margin-bottom:1rem;">
+                        DEMO INGESTION: {len(gdf)} CUSTOM GEOSPATIAL STATIONS PARSED (Narmada, Mahanadi, Yamuna, Kaveri, Tapti, Beas)
+                    </div>
+                    """
+                )
+            except Exception as e:
+                st.error(f"Error reading sample custom GeoJSON: {e}")
+                return
+
+        elif uploaded is not None:
+            try:
+                tmp = os.path.join(DATA_DIR, "_uploaded.geojson")
+                with open(tmp, "wb") as f:
+                    f.write(uploaded.read())
+                gdf = load_geojson(tmp)
+                render_html(
+                    f"""
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#2E6930;
+                                padding:0.4rem 0.6rem;background:#F0FDF4;border:1px solid #BBF7D0;margin-bottom:1rem;">
+                        CUSTOM INGESTION: {len(gdf)} GEOSPATIAL FEATURES PARSED FROM UPLOADED FILE
+                    </div>
+                    """
+                )
+            except Exception as e:
+                st.error(f"Error reading uploaded GeoJSON: {e}")
+                return
+        else:
+            editorial_callout("Click 'Load Included Sample Custom GeoJSON' above or drag & drop any standard GeoJSON file.", level="info")
             return
 
-        if "risk_zone" in gdf.columns:
+        if gdf is not None and "risk_zone" in gdf.columns:
             gdf["flood_risk"] = gdf["risk_zone"]
 
     if gdf is None or len(gdf) == 0:

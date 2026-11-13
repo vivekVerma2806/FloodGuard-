@@ -62,8 +62,34 @@ def main():
     df = None
 
     if source == "Upload Custom Hydrological CSV":
+        sample_csv_path = os.path.join(DATA_DIR, "sample_custom_telemetry.csv")
+        col_c_load, col_c_down = st.columns([1, 1])
+        with col_c_load:
+            btn_load_sample_csv = st.button("Load Included Sample Custom CSV (150 Records)")
+        with col_c_down:
+            if os.path.exists(sample_csv_path):
+                with open(sample_csv_path, "rb") as f_samp_c:
+                    st.download_button(
+                        "Download Sample Custom CSV File",
+                        data=f_samp_c.read(),
+                        file_name="sample_custom_telemetry.csv",
+                        mime="text/csv",
+                    )
+
         uploaded = st.file_uploader("Upload station CSV", type=["csv"], label_visibility="collapsed")
-        if uploaded is not None:
+
+        if btn_load_sample_csv:
+            try:
+                df = pd.read_csv(sample_csv_path, parse_dates=["date"])
+                editorial_callout(
+                    f"Successfully loaded included sample custom telemetry: {len(df):,} records across {df['station_id'].nunique()} basins.",
+                    label="SAMPLE INGESTION // SUCCESS",
+                    level="info",
+                )
+            except Exception as exc:
+                st.error(f"Error reading sample CSV: {exc}")
+                return
+        elif uploaded is not None:
             try:
                 df = pd.read_csv(uploaded, parse_dates=["date"])
                 editorial_callout(

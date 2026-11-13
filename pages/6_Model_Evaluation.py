@@ -9,6 +9,22 @@ import streamlit as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
+from config import (
+    DATA_DIR,
+    FEATURES,
+    RISK_CATEGORIES,
+    TARGET_CLASSIFICATION,
+    TARGET_REGRESSION,
+    TEST_SPLIT_RATIO,
+)
+from src.data_preprocessing import (
+    chronological_split,
+    clean_data,
+    engineer_features,
+    load_data,
+)
+from src.ml_benchmarking import compare_models
+from src.risk_classification import assign_risk_labels, evaluate_classification, train_risk_classifier
 from src.ui_theme import (
     apply_theme,
     render_sidebar,
@@ -139,10 +155,58 @@ def main():
     if lstm_metrics is None and bench_df is None and risk_metrics is None:
         editorial_callout(
             "No active model artifacts registered in the current session memory. "
-            "Navigate to **Section II (Forecasting)**, **Section III (Benchmarking)**, or **Section IV (Classification)** "
-            "to execute models and generate comparative telemetry.",
+            "You can train models in Sections II, III, and IV, or execute an immediate baseline audit on archival telemetry using the button below.",
+            label="SESSION TELEMETRY NOTICE",
             level="info",
         )
+        if st.button("Generate Baseline Performance Audit from Archival Telemetry"):
+            with st.spinner("Executing baseline benchmark and classification pipelines..."):
+                try:
+                    demo_csv = os.path.join(DATA_DIR, "demo_dataset.csv")
+                    if os.path.exists(demo_csv):
+                        df_raw = load_data(demo_csv)
+                        df_clean = clean_data(df_raw)
+                        df_feat = engineer_features(df_clean)
+                        if TARGET_CLASSIFICATION not in df_feat.columns:
+                            df_feat = assign_risk_labels(df_feat)
+
+                        # 1. Regression Benchmarks on 1st station
+                        stn_first = df_feat["station_name"].iloc[0]
+                        sdf = df_feat[df_feat["station_name"] == stn_first].sort_values("date").reset_index(drop=True)
+                        avail_feats = [f for f in FEATURES if f in sdf.columns and f != TARGET_REGRESSION]
+                        sdf_clean = sdf.dropna(subset=avail_feats + [TARGET_REGRESSION])
+                        tr_df, ts_df = chronological_split(sdf_clean, TEST_SPLIT_RATIO)
+
+                        b_res, b_mods = compare_models(
+                            tr_df[avail_feats].values,
+                            tr_df[TARGET_REGRESSION].values,
+                            ts_df[avail_feats].values,
+                            ts_df[TARGET_REGRESSION].values,
+                        )
+                        st.session_state["bench_results"] = b_res
+                        st.session_state["bench_models"] = b_mods
+
+                        # 2. Classification
+                        clf_feats = [f for f in FEATURES if f in df_feat.columns and f != "river_level_m"]
+                        df_clf = df_feat.dropna(subset=clf_feats + [TARGET_CLASSIFICATION])
+                        c_tr, c_ts = chronological_split(df_clf, TEST_SPLIT_RATIO)
+                        clf_model = train_risk_classifier(c_tr[clf_feats].values, c_tr[TARGET_CLASSIFICATION].values, n_estimators=50)
+                        y_pred_clf = clf_model.predict(c_ts[clf_feats].values)
+                        y_prob_clf = clf_model.predict_proba(c_ts[clf_feats].values)
+                        r_met = evaluate_classification(c_ts[TARGET_CLASSIFICATION].values, y_pred_clf, y_prob_clf, labels=RISK_CATEGORIES)
+                        st.session_state["risk_metrics"] = r_met
+                        st.session_state["risk_y_test"] = c_ts[TARGET_CLASSIFICATION].values
+                        st.session_state["risk_y_pred"] = y_pred_clf
+
+                        # 3. Baseline LSTM pseudo-telemetry from GBR/RF
+                        best_model_name = b_res.iloc[0]["Model"]
+                        best_preds = b_mods[best_model_name][1]
+                        st.session_state["lstm_y_test"] = ts_df[TARGET_REGRESSION].values
+                        st.session_state["lstm_y_pred"] = best_preds
+
+                        st.rerun()
+                except Exception as exc:
+                    st.error(f"Failed to generate baseline performance audit: {exc}")
         return
 
     # ── LSTM Summary ─────────────────────────────────────────────────────
