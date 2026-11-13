@@ -169,10 +169,26 @@ def main():
 
         elif uploaded is not None:
             try:
-                tmp = os.path.join(DATA_DIR, "_uploaded.geojson")
-                with open(tmp, "wb") as f:
-                    f.write(uploaded.read())
-                gdf = load_geojson(tmp)
+                import tempfile
+                raw_bytes = uploaded.read()
+                try:
+                    data = json.loads(raw_bytes.decode("utf-8"))
+                    if isinstance(data, dict) and "features" in data:
+                        gdf = gpd.GeoDataFrame.from_features(data["features"], crs="EPSG:4326")
+                    else:
+                        raise ValueError("Non-standard FeatureCollection structure")
+                except Exception:
+                    with tempfile.NamedTemporaryFile(suffix=".geojson", delete=False) as tf:
+                        tf.write(raw_bytes)
+                        tf_path = tf.name
+                    try:
+                        gdf = load_geojson(tf_path)
+                    finally:
+                        if os.path.exists(tf_path):
+                            try:
+                                os.remove(tf_path)
+                            except Exception:
+                                pass
                 render_html(
                     f"""
                     <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#2E6930;

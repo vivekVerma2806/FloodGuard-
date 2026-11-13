@@ -1,0 +1,107 @@
+{
+  "project": "FloodGuard AI",
+  "timestamp_utc": "2026-11-13T11:53:30.051171Z",
+  "environment": {
+    "os": "Windows-10-10.0.26300-SP0",
+    "python_version": "3.11.16",
+    "python_executable": "C:\\Users\\Asus\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe"
+  },
+  "duration_seconds": 64.004,
+  "all_passed": true,
+  "steps": {
+    "syntax_audit": {
+      "check": "static_syntax_compilation",
+      "status": "PASSED",
+      "duration_seconds": 0.118,
+      "details": "compileall verified all .py files in project tree."
+    },
+    "pytest_suite": {
+      "check": "pytest_automated_suite",
+      "status": "PASSED",
+      "return_code": 0,
+      "duration_seconds": 32.007,
+      "passed_count": 36,
+      "failed_count": 0,
+      "skipped_count": 0,
+      "passed_tests": [
+        "tests/test_data_preprocessing.py::TestLoadData::test_load_data",
+        "tests/test_data_preprocessing.py::TestLoadData::test_load_data_file_not_found",
+        "tests/test_data_preprocessing.py::TestCleanData::test_clean_data_removes_duplicates_and_fills_nan",
+        "tests/test_data_preprocessing.py::TestEngineerFeatures::test_engineer_features_adds_columns",
+        "tests/test_data_preprocessing.py::TestNormalizeFeatures::test_normalize_features_range",
+        "tests/test_data_preprocessing.py::TestCreateSequences::test_create_sequences_shapes",
+        "tests/test_data_preprocessing.py::TestChronologicalSplit::test_chronological_split_no_leakage",
+        "tests/test_geospatial.py::TestGetRiskColor::test_get_risk_color[Low-green]",
+        "tests/test_geospatial.py::TestGetRiskColor::test_get_risk_color[Moderate-orange]",
+        "tests/test_geospatial.py::TestGetRiskColor::test_get_risk_color[High-red]",
+        "tests/test_geospatial.py::TestGetRiskColor::test_get_risk_color[Critical-darkred]",
+        "tests/test_geospatial.py::TestGetRiskColor::test_get_risk_color_unknown_returns_gray",
+        "tests/test_geospatial.py::TestCsvToGeoDataFrame::test_csv_to_geodataframe",
+        "tests/test_geospatial.py::TestCreateRiskMap::test_create_risk_map",
+        "tests/test_lstm_model.py::TestBuildLSTMModel::test_build_lstm_model",
+        "tests/test_lstm_model.py::TestBuildLSTMModel::test_build_lstm_model_bad_shape",
+        "tests/test_lstm_model.py::TestTrainLSTMModel::test_train_lstm_model",
+        "tests/test_lstm_model.py::TestPredictLSTM::test_predict_lstm",
+        "tests/test_lstm_model.py::TestSaveLoadModel::test_save_load_model",
+        "tests/test_lstm_model.py::TestSaveLoadModel::test_load_nonexistent_returns_none",
+        "tests/test_ml_benchmarking.py::TestTrainLinearRegression::test_train_linear_regression",
+        "tests/test_ml_benchmarking.py::TestTrainRandomForest::test_train_random_forest",
+        "tests/test_ml_benchmarking.py::TestTrainGradientBoosting::test_train_gradient_boosting",
+        "tests/test_ml_benchmarking.py::TestEvaluateRegression::test_evaluate_regression",
+        "tests/test_ml_benchmarking.py::TestEvaluateRegression::test_evaluate_regression_perfect",
+        "tests/test_ml_benchmarking.py::TestCompareModels::test_compare_models",
+        "tests/test_pipeline_integration.py::TestEndToEndPipeline::test_pipeline_data_integrity",
+        "tests/test_pipeline_integration.py::TestEndToEndPipeline::test_pipeline_chronological_split",
+        "tests/test_pipeline_integration.py::TestEndToEndPipeline::test_pipeline_lstm_flow",
+        "tests/test_pipeline_integration.py::TestEndToEndPipeline::test_pipeline_benchmarking_flow",
+        "tests/test_pipeline_integration.py::TestEndToEndPipeline::test_pipeline_classification_flow",
+        "tests/test_pipeline_integration.py::TestEndToEndPipeline::test_pipeline_geospatial_flow",
+        "tests/test_risk_classification.py::TestAssignRiskLabels::test_assign_risk_labels",
+        "tests/test_risk_classification.py::TestTrainRiskClassifier::test_train_risk_classifier",
+        "tests/test_risk_classification.py::TestEvaluateClassification::test_evaluate_classification",
+        "tests/test_risk_classification.py::TestConfusionMatrixDf::test_confusion_matrix_df"
+      ],
+      "failed_tests": [],
+      "skipped_tests": []
+    },
+    "ml_geospatial_pipeline": {
+      "status": "PASSED",
+      "duration_seconds": 31.825,
+      "data_records": 9130,
+      "stations_count": 5,
+      "neural_backend": "Temporal_Autoregression_Dual_Tier_Fallback",
+      "lstm_forecast": {
+        "test_mae": 0.0902,
+        "test_rmse": 0.1265,
+        "epochs_evaluated": 3
+      },
+      "benchmarking_models": [
+        {
+          "Model": "Linear Regression",
+          "MAE": 4.3976662020500564e-15,
+          "RMSE": 5.517809378415956e-15
+        },
+        {
+          "Model": "Random Forest",
+          "MAE": 0.004507103825136388,
+          "RMSE": 0.01246834242558048
+        },
+        {
+          "Model": "Gradient Boosting",
+          "MAE": 0.012394059783645035,
+          "RMSE": 0.01650431190393436
+        }
+      ],
+      "risk_classification": {
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0,
+        "macro_pr_auc": 0.1695
+      },
+      "geospatial": {
+        "features_loaded": 5,
+        "map_object_generated": true
+      }
+    }
+  }
+}
