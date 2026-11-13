@@ -506,11 +506,23 @@ def kpi_card(title: str, value, caption: str = None, delta=None):
 
 def editorial_callout(text: str, label: str = "RESEARCH NOTE", level: str = "info"):
     """Render an archival marginal note or technical warning."""
+    import re
+
+    # Automatically convert markdown bold/code tags so raw syntax never leaks into HTML DOM
+    clean_text = str(text)
+    clean_text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", clean_text)
+    clean_text = re.sub(r"__(.+?)__", r"<strong>\1</strong>", clean_text)
+    clean_text = re.sub(
+        r"`([^`]+)`",
+        r"<code style=\"font-family:'IBM Plex Mono',monospace;background:rgba(23,23,23,0.06);padding:1px 4px;border-radius:2px;font-size:0.9em;\">\1</code>",
+        clean_text,
+    )
+
     indicator_color = BORDER_DARK if level == "info" else "#B45309"
     callout_html = (
         f'<div style="background-color:{CARD_BG_MUTED};border-left:3px solid {indicator_color};border-top:1px solid {BORDER_COLOR};border-right:1px solid {BORDER_COLOR};border-bottom:1px solid {BORDER_COLOR};padding:0.85rem 1.15rem;margin:1rem 0;border-radius:1px;">'
         f'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.64rem;letter-spacing:0.14em;text-transform:uppercase;color:{TEXT_MUTED};margin-bottom:3px;">// {label}</div>'
-        f'<div style="font-family:\'Inter\',sans-serif;font-size:0.86rem;color:{TEXT_PRIMARY};line-height:1.45;">{text}</div>'
+        f'<div style="font-family:\'Inter\',sans-serif;font-size:0.86rem;color:{TEXT_PRIMARY};line-height:1.45;">{clean_text}</div>'
         f'</div>'
     )
     _safe_html(callout_html)

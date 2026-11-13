@@ -121,3 +121,4 @@ The geospatial subsystem operates over WGS 84 (`EPSG:4326`) coordinate reference
 - Vector polygons and monitoring posts are ingested via `src/geospatial.py`.
 - To safeguard against native C GDAL/Fiona DLL conflicts on Windows, GeoJSON files are first parsed via pure-Python streaming `json.load()` into `gpd.GeoDataFrame.from_features()`.
 - Interactive web maps are compiled using Folium, embedding GeoJSON polygons and CircleMarkers coloured according to the 4 operational hydrological threat tiers (`Low`: green, `Moderate`: orange, `High`: red, `Critical`: darkred).
+

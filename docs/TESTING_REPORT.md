@@ -116,3 +116,4 @@ When tested on local port 8501 via HTTP live probe:
 1. **PyArrow Smart App Control Policy**: Pinned `pyarrow>=18.0.0,<=18.1.0` in `requirements.txt` to eliminate unsigned binary DLL execution warnings on Windows 11.
 2. **TensorFlow Windows Thread TLS**: Windows dynamically blocks native DLL re-entry inside multi-threaded script execution pools. FloodGuard AI's dual-tier architecture safely intercepts this and activates the high-performance temporal autoregression sequence model without exposing end-users to runtime errors.
 3. **In-Memory File Ingestion**: Custom CSV and GeoJSON uploads are parsed in-memory without saving unsanitized temporary paths to disk, mitigating directory traversal vulnerabilities.
+

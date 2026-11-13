@@ -123,3 +123,4 @@ Critical flood events represent rare tail risks, leading to acute class imbalanc
 - **Spatial CRS**: `EPSG:4326` (WGS 84 geographic latitude/longitude).
 - **In-Memory GeoJSON Stream**: Ingested GeoJSON features are streamed directly to `geopandas.GeoDataFrame` using pure-Python memory buffers, bypassing external C binary GDAL/Fiona runtime dependencies.
 - **Leaflet Marker Clusters**: Dynamic HTML popup cards render monitoring post coordinates, latest 24h rainfall volume, mean stage elevation, and assigned hazard tier.
+

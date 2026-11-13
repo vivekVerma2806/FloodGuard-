@@ -45,8 +45,9 @@ def main():
     )
 
     editorial_callout(
-        "**Cartographic Notice:** All monitoring coordinates depict synthetic hydrological observation posts deployed for algorithmic verification and baseline risk auditing.",
-        level="warning",
+        "All monitoring coordinates depict synthetic hydrological observation posts deployed for algorithmic verification and baseline risk auditing.",
+        label="CARTOGRAPHIC NOTICE",
+        level="info",
     )
 
     # ── Ingestion source selector ────────────────────────────────────────
