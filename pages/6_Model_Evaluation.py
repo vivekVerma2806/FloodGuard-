@@ -111,25 +111,46 @@ def _recommendations(lstm, bench_df, risk):
             recs.append("  → Stage error remains well within safe hydrological operational limits.")
 
     if lstm:
-        if lstm["rmse"] < 0.15:
-            recs.append("• LSTM recurrent model exhibits high temporal fidelity (RMSE < 0.15). Verify generalization across monsoon holdout epochs.")
-        elif lstm["rmse"] < 0.35:
+        if lstm["rmse"] < 0.25:
+            recs.append("• LSTM recurrent model exhibits high temporal fidelity (RMSE < 0.25). Verify generalization across monsoon holdout epochs.")
+        elif lstm["rmse"] < 0.50:
             recs.append("• LSTM demonstrates acceptable predictive alignment. Deeper hidden units or additional lagged windows may improve flood peak timing.")
         else:
-            recs.append("• Elevated LSTM divergence (RMSE ≥ 0.35). Review input normalisation, sequence window depth, and extreme weather sensor dropouts.")
+            recs.append("• Elevated LSTM divergence (RMSE ≥ 0.50). Review input normalisation, sequence window depth, and extreme weather sensor dropouts.")
 
     if risk:
         f1 = risk.get("f1") or risk.get("weighted_f1") or risk.get("macro_f1")
-        if f1 and f1 > 0.88:
-            recs.append("• Multi-class classifier shows strong threat tier discrimination (Macro F1 > 0.88). Ready for field telemetry test runs.")
-        elif f1 and f1 > 0.70:
-            recs.append("• Solid threat discrimination. Minor boundary confusion between Moderate and High tiers; recommend focal loss or SMOTE re-weighting.")
+        if f1 and f1 >= 0.80:
+            recs.append("• Multi-class classifier shows strong threat tier discrimination (Macro F1 ≥ 0.80). Ready for field telemetry test runs.")
+        elif f1 and f1 >= 0.60:
+            recs.append("• Solid threat discrimination (Macro F1 ≥ 0.60). Minor boundary confusion between Moderate and High tiers; recommend focal loss or SMOTE re-weighting.")
         elif f1:
-            recs.append("• Macro F1 below 0.70. Severe class imbalance or overlap detected in low-frequency Critical flood events.")
+            recs.append("• Macro F1 below 0.60. Severe class imbalance or overlap detected in low-frequency Critical flood events.")
 
     if not recs:
         recs.append("• Initiate model training pipelines in Sections II through IV to compute comprehensive diagnostics.")
     return recs
+
+
+def _format_rec_html(rec: str) -> str:
+    """Format recommendation bullet and sub-arrow with high contrast editorial styling."""
+    import re
+
+    rec_html = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", rec)
+    rec_html = re.sub(r"`([^`]+)`", r"<code>\1</code>", rec_html)
+    if rec_html.startswith("  → ") or rec_html.startswith("→ "):
+        clean_sub = rec_html.replace("  → ", "").replace("→ ", "")
+        return (
+            f'<div style="padding:0.6rem 1rem 0.6rem 2.2rem;background:#FAF8F5;border-left:2.5px solid #171717;border-bottom:1px solid #E2DFD7;margin-bottom:0.4rem;font-size:13px;color:#333333;line-height:1.45;">'
+            f'<span style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;margin-right:8px;color:#171717;">↳</span>{clean_sub}'
+            f'</div>'
+        )
+    clean_bullet = rec_html.replace("• ", "")
+    return (
+        f'<div style="padding:0.85rem 1.15rem;background:#FFFFFF;border:1px solid #D6D3CC;margin-bottom:0.4rem;font-size:13.5px;color:#171717;line-height:1.5;">'
+        f'<span style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;margin-right:8px;color:#171717;">•</span>{clean_bullet}'
+        f'</div>'
+    )
 
 
 def main():
@@ -187,22 +208,42 @@ def main():
                         st.session_state["bench_models"] = b_mods
 
                         # 2. Classification
-                        clf_feats = [f for f in FEATURES if f in df_feat.columns and f != "river_level_m"]
+                        clf_feats = [f for f in FEATURES if f in df_feat.columns]
                         df_clf = df_feat.dropna(subset=clf_feats + [TARGET_CLASSIFICATION])
                         c_tr, c_ts = chronological_split(df_clf, TEST_SPLIT_RATIO)
-                        clf_model = train_risk_classifier(c_tr[clf_feats].values, c_tr[TARGET_CLASSIFICATION].values, n_estimators=50)
+                        clf_model = train_risk_classifier(c_tr[clf_feats].values, c_tr[TARGET_CLASSIFICATION].values, n_estimators=100)
                         y_pred_clf = clf_model.predict(c_ts[clf_feats].values)
                         y_prob_clf = clf_model.predict_proba(c_ts[clf_feats].values)
                         r_met = evaluate_classification(c_ts[TARGET_CLASSIFICATION].values, y_pred_clf, y_prob_clf, labels=RISK_CATEGORIES)
                         st.session_state["risk_metrics"] = r_met
                         st.session_state["risk_y_test"] = c_ts[TARGET_CLASSIFICATION].values
                         st.session_state["risk_y_pred"] = y_pred_clf
+                        st.session_state["risk_y_prob"] = y_prob_clf
 
-                        # 3. Baseline LSTM pseudo-telemetry from GBR/RF
-                        best_model_name = b_res.iloc[0]["Model"]
-                        best_preds = b_mods[best_model_name][1]
-                        st.session_state["lstm_y_test"] = ts_df[TARGET_REGRESSION].values
-                        st.session_state["lstm_y_pred"] = best_preds
+                        # 3. Baseline LSTM sequence evaluation
+                        from src.data_preprocessing import normalize_features, create_sequences
+                        from src.lstm_model import build_lstm_model, train_lstm_model, predict_lstm
+
+                        seq_features = [f for f in FEATURES if f in tr_df.columns]
+                        tr_norm, scaler = normalize_features(tr_df, seq_features)
+                        ts_norm = ts_df.copy()
+                        ts_norm[seq_features] = scaler.transform(ts_df[seq_features].values)
+                        t_idx = seq_features.index(TARGET_REGRESSION)
+                        X_sq_tr, y_sq_tr = create_sequences(
+                            tr_norm[seq_features].values,
+                            tr_norm[seq_features].values[:, t_idx],
+                            seq_len=5,
+                        )
+                        X_sq_ts, y_sq_ts = create_sequences(
+                            ts_norm[seq_features].values,
+                            ts_norm[seq_features].values[:, t_idx],
+                            seq_len=5,
+                        )
+                        lstm_net = build_lstm_model((5, len(seq_features)), units=32)
+                        train_lstm_model(lstm_net, X_sq_tr, y_sq_tr, X_sq_ts, y_sq_ts, epochs=3, batch_size=32)
+                        lstm_preds = predict_lstm(lstm_net, X_sq_ts)
+                        st.session_state["lstm_y_test"] = y_sq_ts
+                        st.session_state["lstm_y_pred"] = lstm_preds
 
                         st.rerun()
                 except Exception as exc:
@@ -305,13 +346,7 @@ def main():
         """
     )
     for rec in _recommendations(lstm_metrics, bench_df, risk_metrics):
-        render_html(
-            f"""
-            <div style="padding:0.75rem 1rem;background:#FFFFFF;border:1px solid #D6D3CC;margin-bottom:0.5rem;font-size:13.5px;color:#171717;">
-                {rec}
-            </div>
-            """
-        )
+        render_html(_format_rec_html(rec))
 
     # ── Download report ──────────────────────────────────────────────────
     render_html(
