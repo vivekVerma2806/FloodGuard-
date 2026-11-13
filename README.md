@@ -652,3 +652,22 @@ This section explains the 25 foundational machine learning, software engineering
 3. Davis, J., & Goadrich, M. (2006). *The Relationship Between Precision-Recall and ROC Curves*. ICML '06.
 4. McKinney, W. (2010). *Data Structures for Statistical Computing in Python*. Proceedings of the 9th Python in Science Conference.
 5. Pedregosa et al. (2011). *Scikit-learn: Machine Learning in Python*. JMLR, 12, 2825–2830.
+
+---
+
+## 24. Streamlit Community Cloud Deployment
+
+FloodGuard AI is natively configured for zero-configuration public deployment on **Streamlit Community Cloud**:
+
+- **Repository**: `https://github.com/vivekVerma2806/FloodGuard-`
+- **Branch**: `main`
+- **Main file path**: `app.py`
+- **Python Version**: `3.11` (or `3.10`+)
+
+### Deployment Steps:
+1. Navigate to [share.streamlit.io](https://share.streamlit.io/) and sign in with GitHub.
+2. Click **Create app** $\to$ **I already have an app**.
+3. Set **Repository** to `vivekVerma2806/FloodGuard-` and **Branch** to `main`.
+4. Set **Main file path** to `app.py`.
+5. Click **Deploy!**. Streamlit Cloud installs `requirements.txt` automatically and provisions the live application.
+
