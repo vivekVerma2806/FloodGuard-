@@ -1,20 +1,20 @@
 # FloodGuard AI — Automated Test Execution Report
 
-- **Execution Timestamp (UTC)**: `2026-11-13T11:53:30.051171Z`
+- **Execution Timestamp (UTC)**: `2026-11-13T12:18:42.959948Z`
 - **Operating System**: `Windows-10-10.0.26300-SP0`
 - **Python Version**: `3.11.16`
-- **Total Duration**: `64.00 seconds`
+- **Total Duration**: `59.11 seconds`
 - **Overall Status**: **PASSED**
 
 ## 1. Syntax Audit
 - Status: `PASSED`
-- Duration: `0.118s`
+- Duration: `0.113s`
 
 ## 2. Unit & Integration Tests (Pytest)
-- Total Passed: `36`
+- Total Passed: `45`
 - Total Failed: `0`
 - Total Skipped: `0`
-- Duration: `32.007s`
+- Duration: `28.315s`
 
 ## 3. Machine Learning & Geospatial Pipeline
 - Neural Backend: `Temporal_Autoregression_Dual_Tier_Fallback`

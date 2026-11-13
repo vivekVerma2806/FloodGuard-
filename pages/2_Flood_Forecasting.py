@@ -316,11 +316,15 @@ def main():
         col_save_btn, col_save_info = st.columns([1, 3])
         with col_save_btn:
             if st.button("Serialize Weights to Disk"):
-                try:
-                    save_model(st.session_state["lstm_model"])
-                    editorial_callout("Saved weights to models/lstm_flood_model.keras.", label="PERSISTENCE CONFIRMED", level="info")
-                except Exception as exc:
-                    st.error(f"Serialization failed: {exc}")
+                model_to_save = st.session_state.get("lstm_model")
+                if model_to_save is None:
+                    st.warning("No active neural model registered in session memory. Click 'Train LSTM Network' above first.")
+                else:
+                    try:
+                        save_model(model_to_save)
+                        editorial_callout("Saved weights to models/lstm_flood_model.keras.", label="PERSISTENCE CONFIRMED", level="info")
+                    except Exception as exc:
+                        st.error(f"Serialization failed: {exc}")
         with col_save_info:
             st.caption("Persists compiled weights in native Keras 3 format for production deployment.")
 

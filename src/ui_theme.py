@@ -426,9 +426,40 @@ div[data-testid="stDataFrame"] {{
 """
 
 
+def format_markdown_text(content: str) -> str:
+    """Universally parse markdown syntax (bold, italic, strikethrough, code, links) into clean HTML tags."""
+    if not isinstance(content, str):
+        return str(content)
+    import re
+
+    # 1. Inline code: `code`
+    content = re.sub(
+        r"`([^`]+)`",
+        r"<code style=\"font-family:'IBM Plex Mono',monospace;background:rgba(23,23,23,0.06);padding:1px 4px;border-radius:2px;font-size:0.9em;\">\1</code>",
+        content,
+    )
+    # 2. Bold-Italic: ***text***
+    content = re.sub(r"\*\*\*(.+?)\*\*\*", r"<strong><em>\1</em></strong>", content)
+    # 3. Bold: **text** or __text__
+    content = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", content)
+    content = re.sub(r"__(.+?)__", r"<strong>\1</strong>", content)
+    # 4. Strikethrough: ~~text~~
+    content = re.sub(r"~~(.+?)~~", r"<del>\1</del>", content)
+    # 5. Italic: *text* (whitespace-bounded) or _text_
+    content = re.sub(r"(?<!\*)\*(\S(?:[^*]*?\S)?)\*(?!\*)", r"<em>\1</em>", content)
+    # 6. Links: [text](url)
+    content = re.sub(
+        r"\[([^\]]+)\]\(([^)]+)\)",
+        r'<a href="\2" target="_blank" style="color:#171717;text-decoration:underline;">\1</a>',
+        content,
+    )
+    return content
+
+
 def _safe_html(content: str):
     """Render HTML natively if available to prevent any Markdown parser escaping."""
-    lines = [line.strip() for line in content.strip().splitlines() if line.strip()]
+    formatted_content = format_markdown_text(content)
+    lines = [line.strip() for line in formatted_content.strip().splitlines() if line.strip()]
     clean = "".join(lines)
     if hasattr(st, "html"):
         st.html(clean)

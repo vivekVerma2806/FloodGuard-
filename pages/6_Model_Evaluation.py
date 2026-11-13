@@ -244,6 +244,7 @@ def main():
                         lstm_preds = predict_lstm(lstm_net, X_sq_ts)
                         st.session_state["lstm_y_test"] = y_sq_ts
                         st.session_state["lstm_y_pred"] = lstm_preds
+                        st.session_state["lstm_model"] = lstm_net
 
                         st.rerun()
                 except Exception as exc:

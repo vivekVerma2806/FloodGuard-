@@ -1,26 +1,26 @@
 {
   "project": "FloodGuard AI",
-  "timestamp_utc": "2026-11-13T11:53:30.051171Z",
+  "timestamp_utc": "2026-11-13T12:18:42.959948Z",
   "environment": {
     "os": "Windows-10-10.0.26300-SP0",
     "python_version": "3.11.16",
     "python_executable": "C:\\Users\\Asus\\AppData\\Roaming\\uv\\python\\cpython-3.11-windows-x86_64-none\\python.exe"
   },
-  "duration_seconds": 64.004,
+  "duration_seconds": 59.11,
   "all_passed": true,
   "steps": {
     "syntax_audit": {
       "check": "static_syntax_compilation",
       "status": "PASSED",
-      "duration_seconds": 0.118,
+      "duration_seconds": 0.113,
       "details": "compileall verified all .py files in project tree."
     },
     "pytest_suite": {
       "check": "pytest_automated_suite",
       "status": "PASSED",
       "return_code": 0,
-      "duration_seconds": 32.007,
-      "passed_count": 36,
+      "duration_seconds": 28.315,
+      "passed_count": 45,
       "failed_count": 0,
       "skipped_count": 0,
       "passed_tests": [
@@ -44,6 +44,15 @@
         "tests/test_lstm_model.py::TestPredictLSTM::test_predict_lstm",
         "tests/test_lstm_model.py::TestSaveLoadModel::test_save_load_model",
         "tests/test_lstm_model.py::TestSaveLoadModel::test_load_nonexistent_returns_none",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_bold_double_asterisk",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_bold_double_underscore",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_italic_single_asterisk",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_strikethrough",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_inline_code",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_markdown_links",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_composite_markdown_formatting",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_multiplication_not_converted_to_italics",
+        "tests/test_markdown_rendering.py::TestMarkdownRendering::test_non_string_input",
         "tests/test_ml_benchmarking.py::TestTrainLinearRegression::test_train_linear_regression",
         "tests/test_ml_benchmarking.py::TestTrainRandomForest::test_train_random_forest",
         "tests/test_ml_benchmarking.py::TestTrainGradientBoosting::test_train_gradient_boosting",
@@ -66,7 +75,7 @@
     },
     "ml_geospatial_pipeline": {
       "status": "PASSED",
-      "duration_seconds": 31.825,
+      "duration_seconds": 30.636,
       "data_records": 9130,
       "stations_count": 5,
       "neural_backend": "Temporal_Autoregression_Dual_Tier_Fallback",
