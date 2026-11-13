@@ -30,16 +30,17 @@ FloodGuard-/
 ├── models/
 │   └── .gitkeep                    # Target directory for serialized models
 ├── pages/
-│   ├── 1_📊_Data_Upload.py          # CSV upload, missing value imputation, duplicate removal
-│   ├── 2_🌊_Flood_Forecasting.py    # Multivariate LSTM forecasting & loss curves
-│   ├── 3_📈_Model_Benchmarking.py   # Sklearn benchmarking (LR, RF, GBR) vs LSTM
-│   ├── 4_⚠️_Risk_Classification.py   # Multi-class flood risk pipeline (PR-AUC, F1, Confusion Matrix)
-│   ├── 5_🗺️_Geospatial_Map.py       # Interactive Folium map with color-coded risk markers
-│   └── 6_📋_Model_Evaluation.py     # Unified performance audit & actionable recommendations
+│   ├── 1_Data_Upload.py            # CSV upload, missing value imputation, duplicate removal
+│   ├── 2_Flood_Forecasting.py      # Multivariate LSTM forecasting & loss curves
+│   ├── 3_Model_Benchmarking.py     # Sklearn benchmarking (LR, RF, GBR) vs LSTM
+│   ├── 4_Risk_Classification.py    # Multi-class flood risk pipeline (PR-AUC, F1, Confusion Matrix)
+│   ├── 5_Geospatial_Map.py         # Interactive Folium map with color-coded risk markers
+│   └── 6_Model_Evaluation.py       # Unified performance audit & actionable recommendations
 ├── scripts/
 │   └── generate_demo_data.py       # Synthetic data generation engine with physical river dynamics
 ├── src/
 │   ├── __init__.py
+│   ├── ui_theme.py                 # Vintage scientific editorial theme & custom brand identity
 │   ├── data_preprocessing.py       # Cleaning, rolling-window features, normalization, sequences
 │   ├── lstm_model.py               # Deep LSTM architecture (Keras/TensorFlow) with EarlyStopping
 │   ├── ml_benchmarking.py          # Benchmark regression pipelines & feature importance

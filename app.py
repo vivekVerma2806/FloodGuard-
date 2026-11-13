@@ -1,148 +1,196 @@
-"""FloodGuard AI — Overview Dashboard (Main Entry Point)."""
+"""FloodGuard AI - Spatiotemporal Risk Intelligence (Overview)."""
 
-import streamlit as st
+import os
+import sys
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import os
-import sys
+import streamlit as st
 
-# Ensure project root is on path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from config import DATA_DIR, DEMO_STATIONS
+from src.ui_theme import (
+    apply_theme,
+    render_sidebar,
+    editorial_header,
+    kpi_card,
+    editorial_callout,
+    style_plotly_chart,
+    BORDER_COLOR,
+    CARD_BG,
+    TEXT_PRIMARY,
+    TEXT_MUTED,
+)
 
-# ── Page configuration ──────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
+# Page Configuration
+# -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="FloodGuard AI",
-    page_icon="🌊",
+    page_title="FloodGuard AI — Spatiotemporal Risk Intelligence",
+    page_icon="☵",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-
-# ── Helper ───────────────────────────────────────────────────────────────────
-def kpi_card(title: str, value, delta=None):
-    delta_html = ""
-    if delta is not None:
-        color = "#28a745" if float(delta) >= 0 else "#dc3545"
-        delta_html = f'<p style="margin:0; color:{color}; font-size:0.9rem;">{delta}</p>'
-    st.markdown(
-        f"""
-        <div style="padding: 1rem; border-radius: 0.5rem; border: 1px solid #e0e0e0;
-                    background: #f8f9fa; text-align: center;">
-            <h4 style="margin:0; color:#666;">{title}</h4>
-            <h2 style="margin:0; color:#1f77b4;">{value}</h2>
-            {delta_html}
-        </div>""",
-        unsafe_allow_html=True,
-    )
+# Apply global monochrome editorial styling
+apply_theme()
+render_sidebar()
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
 def main():
-    st.title("🌊 FloodGuard AI")
-    st.markdown(
-        "**AI-powered flood monitoring, forecasting & risk assessment dashboard.**  \n"
-        "Upload your own data or explore the built-in demo dataset covering five "
-        "Indian river-basin monitoring stations (2019-2023)."
+    editorial_header(
+        title="Hydrometric Basin Observatory",
+        kicker="ARCHIVAL TELEMETRY // EXECUTIVE SYNTHESIS",
+        subtitle=(
+            "Continuous multi-station hydrological observations, antecedent precipitation records, "
+            "and spatiotemporal risk indices across five sentinel river basins."
+        ),
     )
-    st.markdown("---")
 
-    # Load demo dataset
+    # Ingest baseline observations
     demo_path = os.path.join(DATA_DIR, "demo_dataset.csv")
     if not os.path.exists(demo_path):
-        st.warning(
-            "⚠️ Demo dataset not found. Please run "
-            "`scripts/generate_demo_data.py` first, or upload data via the "
-            "**📊 Data Upload** page."
+        editorial_callout(
+            "Baseline hydrological dataset is uninitialized. Generate the sample telemetry via "
+            "`scripts/generate_demo_data.py` or ingest records via the Data Upload module.",
+            label="TELEMETRY STATUS // MISSING",
+            level="warning",
         )
         return
 
     try:
         df = pd.read_csv(demo_path, parse_dates=["date"])
-    except Exception as e:
-        st.error(f"Error loading demo dataset: {e}")
+    except Exception as exc:
+        st.error(f"Failed to parse hydrological observations: {exc}")
         return
 
-    # ── KPI Cards ────────────────────────────────────────────────────────
-    st.subheader("📌 Key Statistics")
+    # -------------------------------------------------------------------------
+    # Key Scientific Metrics
+    # -------------------------------------------------------------------------
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        kpi_card("Total Records", f"{len(df):,}")
+        kpi_card("Total Observations", f"{len(df):,}", caption="Daily telemetry samples (2019-2023)")
     with c2:
-        kpi_card("Monitoring Stations", df["station_id"].nunique())
+        kpi_card("Sentinel Basins", f"{df['station_id'].nunique():02d}", caption="Gauging stations monitored")
     with c3:
-        kpi_card("Avg Rainfall (mm)", f"{df['rainfall_mm'].mean():.1f}")
+        kpi_card("Mean Precipitation", f"{df['rainfall_mm'].mean():.1f} mm", caption="Basin-wide daily average")
     with c4:
-        kpi_card("Avg River Level (m)", f"{df['river_level_m'].mean():.2f}")
+        kpi_card("Mean River Stage", f"{df['river_level_m'].mean():.2f} m", caption="Surface elevation gauge datum")
 
-    st.markdown("")  # spacer
+    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
 
-    # ── Overview Charts ──────────────────────────────────────────────────
-    st.subheader("📈 Overview Charts")
-    tab1, tab2 = st.tabs(["Rainfall Trend", "River Level Distribution"])
+    # -------------------------------------------------------------------------
+    # Scientific Visualizations
+    # -------------------------------------------------------------------------
+    tab_rainfall, tab_stage, tab_stations = st.tabs([
+        "Precipitation Time-Series",
+        "Stage Elevation Distribution",
+        "Sentinel Station Ledger",
+    ])
 
-    with tab1:
-        # Aggregate daily rainfall across all stations
+    with tab_rainfall:
         daily_rain = (
             df.groupby("date")["rainfall_mm"]
             .mean()
             .reset_index()
             .rename(columns={"rainfall_mm": "avg_rainfall_mm"})
         )
-        fig_rain = px.line(
-            daily_rain,
-            x="date",
-            y="avg_rainfall_mm",
-            title="Average Daily Rainfall Across Stations",
-            labels={"date": "Date", "avg_rainfall_mm": "Rainfall (mm)"},
-            template="plotly_white",
+        # 30-day moving average for hydrological trendline
+        daily_rain["rolling_30d"] = daily_rain["avg_rainfall_mm"].rolling(window=30, min_periods=1).mean()
+
+        fig_rain = go.Figure()
+        fig_rain.add_trace(
+            go.Scatter(
+                x=daily_rain["date"],
+                y=daily_rain["avg_rainfall_mm"],
+                mode="lines",
+                name="Daily Mean Precipitation",
+                line=dict(color="#B5B2A9", width=1),
+                opacity=0.65,
+            )
         )
-        fig_rain.update_traces(line_color="#1f77b4")
+        fig_rain.add_trace(
+            go.Scatter(
+                x=daily_rain["date"],
+                y=daily_rain["rolling_30d"],
+                mode="lines",
+                name="30-Day Moving Mean",
+                line=dict(color="#171717", width=2),
+            )
+        )
+        fig_rain.update_layout(
+            title="Basin-Wide Daily Precipitation Time-Series (2019 – 2023)",
+            xaxis_title="Calendar Date",
+            yaxis_title="Precipitation (mm)",
+        )
+        fig_rain = style_plotly_chart(fig_rain, height=400)
         st.plotly_chart(fig_rain, use_container_width=True)
 
-    with tab2:
-        fig_level = px.histogram(
-            df,
-            x="river_level_m",
-            color="station_name",
-            nbins=50,
-            title="River Level Distribution by Station",
-            labels={"river_level_m": "River Level (m)", "station_name": "Station"},
-            template="plotly_white",
+    with tab_stage:
+        # Monochrome shades for the stations
+        station_colors = ["#171717", "#4B5563", "#78716C", "#A8A29E", "#D6D3CC"]
+        stations = sorted(df["station_name"].unique())
+
+        fig_level = go.Figure()
+        for idx, station in enumerate(stations):
+            stn_data = df[df["station_name"] == station]["river_level_m"].dropna()
+            fig_level.add_trace(
+                go.Histogram(
+                    x=stn_data,
+                    name=station.split(" - ")[0],
+                    nbinsx=40,
+                    opacity=0.65,
+                    marker=dict(color=station_colors[idx % len(station_colors)], line=dict(color="#171717", width=0.5)),
+                )
+            )
+
+        fig_level.update_layout(
             barmode="overlay",
-            opacity=0.65,
+            title="River Gauge Stage Distribution by Sentinel Basin",
+            xaxis_title="River Stage Elevation (m)",
+            yaxis_title="Observation Frequency",
         )
+        fig_level = style_plotly_chart(fig_level, height=400)
         st.plotly_chart(fig_level, use_container_width=True)
 
-    # ── Sidebar ──────────────────────────────────────────────────────────
-    with st.sidebar:
-        st.image(
-            "https://img.icons8.com/fluency/96/flood.png",
-            width=64,
-        )
-        st.markdown("### FloodGuard AI")
+    with tab_stations:
         st.markdown(
-            "An end-to-end ML pipeline for flood forecasting, risk "
-            "classification, and geospatial analysis."
+            f"""
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.1em; color: {TEXT_MUTED}; margin-bottom: 0.75rem;">
+                // SENTINEL MONITORING NETWORK METADATA & RECENT OBSERVATIONS
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        st.markdown("---")
-        st.markdown("**Navigation**")
-        st.markdown(
-            "Use the sidebar pages to:\n"
-            "1. 📊 Upload & preprocess data\n"
-            "2. 🌊 LSTM flood forecasting\n"
-            "3. 📈 Benchmark ML models\n"
-            "4. ⚠️ Risk classification\n"
-            "5. 🗺️ Geospatial risk map\n"
-            "6. 📋 Model evaluation report"
-        )
-        st.markdown("---")
-        st.caption("Built with Streamlit · Plotly · TensorFlow · scikit-learn")
+        latest_summary = []
+        for stn in DEMO_STATIONS:
+            stn_df = df[df["station_id"] == stn["id"]].sort_values("date")
+            latest_row = stn_df.iloc[-1] if len(stn_df) > 0 else {}
+            latest_summary.append({
+                "Station ID": stn["id"],
+                "Basin Name": stn["name"],
+                "Coordinates": f"{stn['lat']:.4f}° N, {stn['lon']:.4f}° E",
+                "Mean Level (m)": f"{stn_df['river_level_m'].mean():.2f}" if len(stn_df) > 0 else "N/A",
+                "Max Recorded (m)": f"{stn_df['river_level_m'].max():.2f}" if len(stn_df) > 0 else "N/A",
+                "Latest Observation": str(latest_row.get("date", "N/A"))[:10],
+                "Current Stage": f"{latest_row.get('river_level_m', 0.0):.2f} m",
+            })
+        st.dataframe(pd.DataFrame(latest_summary), use_container_width=True, hide_index=True)
+
+    # -------------------------------------------------------------------------
+    # Technical Abstract
+    # -------------------------------------------------------------------------
+    editorial_callout(
+        "FloodGuard AI operates as an analytical bridge between physical hydrology and deep learning. "
+        "Observations undergo strict temporal validation to prevent predictive lookahead bias, feeding "
+        "multivariate LSTM networks and ensemble regressors to establish calibrated hydrological lead-time.",
+        label="RESEARCH BULLETIN // METHODOLOGY & SCOPE",
+        level="info",
+    )
 
 
 try:
     main()
 except Exception as exc:
-    st.error(f"An unexpected error occurred: {exc}")
+    st.error(f"Runtime Exception in Overview module: {exc}")

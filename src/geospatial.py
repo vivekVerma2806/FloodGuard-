@@ -116,19 +116,19 @@ def load_geojson(filepath: str) -> gpd.GeoDataFrame:
 # ── interactive maps ─────────────────────────────────────────────────────────
 
 def _build_legend_html() -> str:
-    """Return an HTML legend block for the risk-category colour scheme."""
+    """Return an HTML legend block styled like a vintage cartographic index."""
     items = ''.join(
-        f'<li><span style="background:{_RISK_COLORS[cat]};width:14px;'
-        f'height:14px;display:inline-block;margin-right:6px;'
-        f'border-radius:50%;"></span>{cat}</li>'
+        f'<li style="display:flex;align-items:center;margin-bottom:4px;">'
+        f'<span style="background:{_RISK_COLORS[cat]};width:10px;height:10px;display:inline-block;margin-right:8px;border:1px solid #171717;border-radius:1px;"></span>'
+        f'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;color:#171717;letter-spacing:0.04em;">{cat.upper()}</span></li>'
         for cat in RISK_CATEGORIES
     )
     return (
-        '<div style="position:fixed;bottom:30px;left:30px;z-index:1000;'
-        'background:white;padding:10px 14px;border-radius:6px;'
-        'box-shadow:0 2px 6px rgba(0,0,0,.3);font-size:13px;">'
-        '<b>Flood Risk</b>'
-        f'<ul style="list-style:none;padding:4px 0 0 0;margin:0;">{items}</ul>'
+        '<div style="position:fixed;bottom:25px;left:25px;z-index:1000;'
+        'background:#FAF8F5;border:1px solid #171717;padding:10px 14px;border-radius:1px;'
+        'box-shadow:0 1px 3px rgba(0,0,0,0.1);font-family:\'IBM Plex Mono\',monospace;">'
+        '<div style="font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#666;border-bottom:1px solid #D6D3CC;padding-bottom:4px;margin-bottom:6px;">// CARTOGRAPHIC RISK TIER</div>'
+        f'<ul style="list-style:none;padding:0;margin:0;">{items}</ul>'
         '</div>'
     )
 
@@ -191,10 +191,12 @@ def create_risk_map(
             risk = row[risk_col]
             color = get_risk_color(risk)
             popup_html = (
-                f"<b>{row[name_col]}</b><br>"
-                f"Water Level: {row[level_col]:.2f} m<br>"
-                f"Rainfall: {row[rainfall_col]:.1f} mm<br>"
-                f"Risk: <b>{risk}</b>"
+                f'<div style="font-family:\'IBM Plex Mono\',Consolas,monospace;font-size:12px;color:#171717;background:#FAF8F5;padding:6px 8px;line-height:1.5;border:1px solid #171717;">'
+                f'<div style="font-weight:700;font-size:13px;border-bottom:1px solid #171717;padding-bottom:3px;margin-bottom:5px;letter-spacing:0.02em;">{row[name_col]}</div>'
+                f'<div>STAGE LEVEL : <b>{row[level_col]:.2f} m</b></div>'
+                f'<div>PRECIPITATION: <b>{row[rainfall_col]:.1f} mm</b></div>'
+                f'<div style="margin-top:5px;padding-top:3px;border-top:1px dashed #D6D3CC;">THREAT TIER : <b style="color:{color};">{risk.upper()}</b></div>'
+                f'</div>'
             )
             folium.CircleMarker(
                 location=[row.geometry.y, row.geometry.x],
