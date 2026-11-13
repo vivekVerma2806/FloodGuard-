@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models (keep .gitkeep)
+models/*.keras
+models/*.h5
+models/*.pkl
+
+# Data uploads
+uploads/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets
+*.env
+.env.*

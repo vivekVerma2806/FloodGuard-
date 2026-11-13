@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [73.7898, 19.9975]
+      },
+      "properties": {
+        "station_id": "STN001",
+        "station_name": "Godavari Basin - Nashik",
+        "region": "Godavari Basin",
+        "risk_zone": "High",
+        "river_level_m": 5.82,
+        "rainfall_mm": 48.5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [91.7362, 26.1445]
+      },
+      "properties": {
+        "station_id": "STN002",
+        "station_name": "Brahmaputra Basin - Guwahati",
+        "region": "Brahmaputra Basin",
+        "risk_zone": "Critical",
+        "river_level_m": 7.65,
+        "rainfall_mm": 72.3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [82.9739, 25.3176]
+      },
+      "properties": {
+        "station_id": "STN003",
+        "station_name": "Ganga Basin - Varanasi",
+        "region": "Ganga Basin",
+        "risk_zone": "Moderate",
+        "river_level_m": 4.15,
+        "rainfall_mm": 22.0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [80.6480, 16.5062]
+      },
+      "properties": {
+        "station_id": "STN004",
+        "station_name": "Krishna Basin - Vijayawada",
+        "region": "Krishna Basin",
+        "risk_zone": "Low",
+        "river_level_m": 2.40,
+        "rainfall_mm": 5.1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.8830, 20.4625]
+      },
+      "properties": {
+        "station_id": "STN005",
+        "station_name": "Mahanadi Basin - Cuttack",
+        "region": "Mahanadi Basin",
+        "risk_zone": "High",
+        "river_level_m": 6.10,
+        "rainfall_mm": 55.4
+      }
+    }
+  ]
+}
