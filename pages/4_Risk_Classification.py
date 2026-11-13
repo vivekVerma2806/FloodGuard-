@@ -25,7 +25,9 @@ from src.ui_theme import (
     editorial_header,
     kpi_card,
     editorial_callout,
+    render_html,
     style_plotly_chart,
+    RISK_COLORS,
     RISK_PALETTE,
     TEXT_MUTED,
 )
@@ -81,62 +83,57 @@ def main():
     # -------------------------------------------------------------------------
     # Standardized Risk Tier Definitions
     # -------------------------------------------------------------------------
-    st.markdown(
+    render_html(
         f"""
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-bottom: 0.6rem;">
             // OPERATIONAL HYDROMETRIC THREAT TIERS
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     c_low, c_mod, c_high, c_crit = st.columns(4)
     with c_low:
-        st.markdown(
+        render_html(
             f"""
-            <div style="border-left: 3px solid {RISK_PALETTE['Low']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
-                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_PALETTE['Low']}; font-weight: 600;">TIER I // LOW</div>
+            <div style="border-left: 3px solid {RISK_COLORS['Low']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_COLORS['Low']}; font-weight: 600;">TIER I // LOW</div>
                 <div style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-top: 2px;">Normal Stage</div>
                 <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: #666; margin-top: 2px;">Elevation &lt; 3.0 m</div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
     with c_mod:
-        st.markdown(
+        render_html(
             f"""
-            <div style="border-left: 3px solid {RISK_PALETTE['Moderate']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
-                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_PALETTE['Moderate']}; font-weight: 600;">TIER II // MODERATE</div>
+            <div style="border-left: 3px solid {RISK_COLORS['Moderate']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_COLORS['Moderate']}; font-weight: 600;">TIER II // MODERATE</div>
                 <div style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-top: 2px;">Advisory Stage</div>
                 <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: #666; margin-top: 2px;">3.0 m &le; Elevation &lt; 5.0 m</div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
     with c_high:
-        st.markdown(
+        render_html(
             f"""
-            <div style="border-left: 3px solid {RISK_PALETTE['High']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
-                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_PALETTE['High']}; font-weight: 600;">TIER III // HIGH</div>
+            <div style="border-left: 3px solid {RISK_COLORS['High']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_COLORS['High']}; font-weight: 600;">TIER III // HIGH</div>
                 <div style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-top: 2px;">Warning Stage</div>
                 <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: #666; margin-top: 2px;">5.0 m &le; Elevation &lt; 7.0 m</div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
     with c_crit:
-        st.markdown(
+        render_html(
             f"""
-            <div style="border-left: 3px solid {RISK_PALETTE['Critical']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
-                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_PALETTE['Critical']}; font-weight: 600;">TIER IV // CRITICAL</div>
+            <div style="border-left: 3px solid {RISK_COLORS['Critical']}; background: #FFFFFF; border-top: 1px solid #D6D3CC; border-right: 1px solid #D6D3CC; border-bottom: 1px solid #D6D3CC; padding: 0.75rem 1rem;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: {RISK_COLORS['Critical']}; font-weight: 600;">TIER IV // CRITICAL</div>
                 <div style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-top: 2px;">Inundation Hazard</div>
                 <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: #666; margin-top: 2px;">Elevation &ge; 7.0 m</div>
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
-    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+    render_html("<div style='height: 16px;'></div>")
 
     # -------------------------------------------------------------------------
     # Observation Distribution
@@ -147,7 +144,7 @@ def main():
         go.Bar(
             x=risk_counts.index,
             y=risk_counts.values,
-            marker_color=[RISK_PALETTE[c] for c in risk_counts.index],
+            marker_color=[RISK_COLORS[c] for c in risk_counts.index],
             text=[f"{v:,} ({v/len(df)*100:.1f}%)" for v in risk_counts.values],
             textposition="auto",
         )
@@ -207,13 +204,12 @@ def main():
         y_pred = st.session_state["risk_y_pred"]
 
         st.markdown("---")
-        st.markdown(
+        render_html(
             f"""
             <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-bottom: 0.75rem;">
                 // OUT-OF-SAMPLE CLASSIFICATION METRICS
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         cols = st.columns(4)
@@ -232,7 +228,7 @@ def main():
             kpi_card("PR-AUC (Macro)", f"{pr_auc:.4f}" if isinstance(pr_auc, float) else pr_auc, caption="Precision-Recall curve integral")
 
         # Visualizations
-        st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+        render_html("<div style='height: 16px;'></div>")
         tab_cm, tab_report = st.tabs(["Confusion Matrix Heatmap", "Comprehensive Classification Report"])
 
         with tab_cm:

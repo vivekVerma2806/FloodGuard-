@@ -90,6 +90,9 @@ def csv_to_geodataframe(
 def load_geojson(filepath: str) -> gpd.GeoDataFrame:
     """Load a GeoJSON file and return it as a GeoDataFrame.
 
+    Uses pure-Python json decoding first to avoid native C GDAL/Pyogrio/Fiona
+    DLL conflicts on Windows, falling back to gpd.read_file if needed.
+
     Args:
         filepath: Path to the ``.geojson`` file.
 
@@ -100,13 +103,21 @@ def load_geojson(filepath: str) -> gpd.GeoDataFrame:
         FileNotFoundError: If *filepath* does not exist.
         RuntimeError: On parsing or I/O errors.
     """
+    if not os.path.isfile(filepath):
+        raise FileNotFoundError(f"GeoJSON file not found: {filepath}")
+
+    # Primary method: pure-Python JSON loading into GeoDataFrame
     try:
-        if not os.path.isfile(filepath):
-            raise FileNotFoundError(f"GeoJSON file not found: {filepath}")
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        if isinstance(data, dict) and 'features' in data:
+            return gpd.GeoDataFrame.from_features(data['features'], crs='EPSG:4326')
+    except Exception:
+        pass
 
-        gdf = gpd.read_file(filepath)
-        return gdf
-
+    # Secondary fallback: standard GeoPandas reader
+    try:
+        return gpd.read_file(filepath)
     except FileNotFoundError:
         raise
     except Exception as e:

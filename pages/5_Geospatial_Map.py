@@ -15,6 +15,7 @@ from src.ui_theme import (
     editorial_header,
     editorial_callout,
     kpi_card,
+    render_html,
     RISK_COLORS,
 )
 from src.data_preprocessing import load_data, clean_data, engineer_features
@@ -49,14 +50,13 @@ def main():
     )
 
     # ── Ingestion source selector ────────────────────────────────────────
-    st.markdown(
+    render_html(
         """
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                     text-transform:uppercase;color:#666666;margin:1.2rem 0 0.4rem 0;">
             SELECT GEOSPATIAL DATA INGESTION SOURCE
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     source = st.radio(
@@ -79,14 +79,13 @@ def main():
             return
         try:
             gdf = load_geojson(geojson_path)
-            st.markdown(
+            render_html(
                 f"""
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#2E6930;
                             padding:0.4rem 0.6rem;background:#F0FDF4;border:1px solid #BBF7D0;margin-bottom:1rem;">
                     RECORD INGESTION: {len(gdf)} GEOSPATIAL FEATURES LOADED FROM ARCHIVE
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
         except Exception as e:
             st.error(f"Failed to ingest GeoJSON: {e}")
@@ -121,14 +120,13 @@ def main():
 
         try:
             gdf = csv_to_geodataframe(latest, lat_col="latitude", lon_col="longitude")
-            st.markdown(
+            render_html(
                 f"""
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#2E6930;
                             padding:0.4rem 0.6rem;background:#F0FDF4;border:1px solid #BBF7D0;margin-bottom:1rem;">
                     TELEMETRY MAPPED: {len(gdf)} ACTIVE MONITORING STATIONS LOCATED
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
         except Exception as e:
             st.error(f"Error projecting coordinates to GeoDataFrame: {e}")
@@ -146,14 +144,13 @@ def main():
             with open(tmp, "wb") as f:
                 f.write(uploaded.read())
             gdf = load_geojson(tmp)
-            st.markdown(
+            render_html(
                 f"""
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#2E6930;
                             padding:0.4rem 0.6rem;background:#F0FDF4;border:1px solid #BBF7D0;margin-bottom:1rem;">
                     CUSTOM INGESTION: {len(gdf)} GEOSPATIAL FEATURES PARSED
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
         except Exception as e:
             st.error(f"Error reading uploaded GeoJSON: {e}")
@@ -180,14 +177,13 @@ def main():
         gdf["station_name"] = [f"Station {i+1}" for i in range(len(gdf))]
 
     # ── Summary metrics strip ────────────────────────────────────────────
-    st.markdown(
+    render_html(
         """
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                     text-transform:uppercase;color:#666666;margin:1.4rem 0 0.4rem 0;">
             HYDROLOGIC OBSERVATION SUMMARY
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -203,14 +199,13 @@ def main():
         kpi_card("CRITICAL TIER STATIONS", f"{crit_count}", "Immediate threshold exceedance")
 
     # ── Render Map ───────────────────────────────────────────────────────
-    st.markdown(
+    render_html(
         """
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                     text-transform:uppercase;color:#666666;margin:1.6rem 0 0.5rem 0;">
             INTERACTIVE HYDROLOGIC ATLAS & TELEMETRY NETWORK
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     try:
@@ -222,20 +217,19 @@ def main():
             name_col="station_name",
         )
         # Wrap the folium html inside an editorial styled container
-        st.markdown(
+        render_html(
             """
             <div style="border:1px solid #171717;background:#FFFFFF;padding:2px;">
-            """,
-            unsafe_allow_html=True,
+            """
         )
         components.html(m._repr_html_(), height=580, scrolling=False)
-        st.markdown("</div>", unsafe_allow_html=True)
+        render_html("</div>")
     except Exception as e:
         st.error(f"Cartographic rendering failed: {e}")
 
     # ── Cartographic Legend ──────────────────────────────────────────────
-    st.markdown(
-        """
+    render_html(
+        f"""
         <div style="margin-top:1.5rem;padding:0.9rem 1.2rem;background:#FFFFFF;border:1px solid #D6D3CC;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;
                         text-transform:uppercase;color:#666666;margin-bottom:0.6rem;">
@@ -243,36 +237,34 @@ def main():
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:2rem;">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="width:12px;height:12px;background:#2E6930;border:1px solid #171717;display:inline-block;"></span>
+                    <span style="width:12px;height:12px;background:{RISK_COLORS['Low']};border:1px solid #171717;display:inline-block;"></span>
                     <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#171717;">LOW RISK (SAFE EQUILIBRIUM)</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="width:12px;height:12px;background:#B45309;border:1px solid #171717;display:inline-block;"></span>
+                    <span style="width:12px;height:12px;background:{RISK_COLORS['Moderate']};border:1px solid #171717;display:inline-block;"></span>
                     <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#171717;">MODERATE (ADVISORY MONITORING)</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="width:12px;height:12px;background:#B91C1C;border:1px solid #171717;display:inline-block;"></span>
+                    <span style="width:12px;height:12px;background:{RISK_COLORS['High']};border:1px solid #171717;display:inline-block;"></span>
                     <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#171717;">HIGH (FLOOD WARNING ACTIVE)</span>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="width:12px;height:12px;background:#6B1111;border:1px solid #171717;display:inline-block;"></span>
+                    <span style="width:12px;height:12px;background:{RISK_COLORS['Critical']};border:1px solid #171717;display:inline-block;"></span>
                     <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#171717;">CRITICAL (CATASTROPHIC INUNDATION)</span>
                 </div>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     # ── Station Details Table ────────────────────────────────────────────
-    st.markdown(
+    render_html(
         """
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                     text-transform:uppercase;color:#666666;margin:1.8rem 0 0.5rem 0;">
             TELEMETRY STATION INVENTORY & STAGE LEDGER
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     cols_to_show = [c for c in ["station_name", "flood_risk", "river_level_m", "rainfall_mm", "latitude", "longitude"] if c in gdf.columns]

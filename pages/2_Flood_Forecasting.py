@@ -40,6 +40,7 @@ from src.ui_theme import (
     editorial_header,
     kpi_card,
     editorial_callout,
+    render_html,
     style_plotly_chart,
     TEXT_MUTED,
 )
@@ -113,13 +114,12 @@ def main():
         )
         return
 
-    st.markdown(
+    render_html(
         f"""
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: {TEXT_MUTED}; margin-bottom: 1.25rem;">
             // STATION OBSERVATIONS: {len(sdf):,} DAYS | ATTRIBUTES: {len(available_features)} | TARGET: {TARGET_REGRESSION}
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     # -------------------------------------------------------------------------
@@ -213,13 +213,12 @@ def main():
         mae = float(np.mean(np.abs(y_test - y_pred)))
         rmse = float(np.sqrt(np.mean((y_test - y_pred) ** 2)))
 
-        st.markdown(
+        render_html(
             f"""
             <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-bottom: 0.5rem;">
                 // OUT-OF-SAMPLE TEST VALIDATION SCORECARD
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
         c1, c2, c3, c4 = st.columns(4)
         with c1:
@@ -232,7 +231,7 @@ def main():
             kpi_card("Test Observations", f"{len(y_test):,}", caption="Unseen evaluation window")
 
         # Visual charts
-        st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+        render_html("<div style='height: 16px;'></div>")
         tab_preds, tab_loss = st.tabs(["Hydrograph: Observed vs. Forecast", "Training & Validation Loss"])
 
         with tab_preds:

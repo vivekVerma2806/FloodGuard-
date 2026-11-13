@@ -9,6 +9,7 @@ Visual Direction:
   IBM Plex Mono (metrics, timestamps, scientific notation)
 """
 
+import textwrap
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -26,24 +27,22 @@ BORDER_COLOR = "#D6D3CC"
 BORDER_DARK = "#171717"
 ACCENT_BLACK = "#171717"
 
-# Muted archival risk tones for cartographic clarity
-RISK_PALETTE = {
-    "Low": "#2E6930",        # Deep forest sage
-    "Moderate": "#B45309",   # Archival ochre / amber
-    "High": "#B91C1C",       # Deep brick red
-    "Critical": "#6B1111",   # Dark oxblood / mahogany
+# Standardized Cartographic Risk Colors
+# Low = Green, Moderate = Yellow, High = Orange, Critical = Red
+RISK_COLORS = {
+    "Low": "#2E6930",        # Forest Green
+    "Moderate": "#EAB308",   # Archival Amber / Yellow
+    "High": "#F97316",       # Warning Orange
+    "Critical": "#DC2626",   # Deep Red
 }
+RISK_PALETTE = RISK_COLORS   # Alias for backward compatibility
 
 # -----------------------------------------------------------------------------
 # Custom Vector SVG Brand Mark
 # -----------------------------------------------------------------------------
-# Concept: Geodetic survey benchmark symbol intersected with concentric river
-# elevation contour lines and hydrometric elevation gauge gradations.
 BRAND_LOGO_SVG = """
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Outer hairline boundary -->
   <rect x="1.5" y="1.5" width="45" height="45" stroke="#171717" stroke-width="1.2"/>
-  <!-- Corner survey fiducials -->
   <line x1="1.5" y1="8" x2="6" y2="8" stroke="#171717" stroke-width="1"/>
   <line x1="8" y1="1.5" x2="8" y2="6" stroke="#171717" stroke-width="1"/>
   <line x1="42" y1="8" x2="46.5" y2="8" stroke="#171717" stroke-width="1"/>
@@ -52,11 +51,9 @@ BRAND_LOGO_SVG = """
   <line x1="8" y1="42" x2="8" y2="46.5" stroke="#171717" stroke-width="1"/>
   <line x1="42" y1="40" x2="46.5" y2="40" stroke="#171717" stroke-width="1"/>
   <line x1="40" y1="42" x2="40" y2="46.5" stroke="#171717" stroke-width="1"/>
-  <!-- Topographic river elevation contour lines -->
   <path d="M 6 36 C 14 36, 18 30, 24 30 C 30 30, 34 34, 42 34" stroke="#171717" stroke-width="1.2" fill="none"/>
   <path d="M 6 27 C 13 27, 17 21, 24 21 C 31 21, 35 25, 42 25" stroke="#171717" stroke-width="1.5" fill="none"/>
   <path d="M 6 18 C 12 18, 16 12, 24 12 C 32 12, 36 16, 42 16" stroke="#171717" stroke-width="1.2" fill="none"/>
-  <!-- Hydrometric gauge crosshair indicator -->
   <circle cx="24" cy="21" r="2.5" fill="#171717"/>
   <line x1="24" y1="6" x2="24" y2="10" stroke="#171717" stroke-width="1"/>
   <line x1="24" y1="32" x2="24" y2="42" stroke="#171717" stroke-width="1" stroke-dasharray="2 2"/>
@@ -89,7 +86,7 @@ EDITORIAL_CSS = f"""
 }}
 
 /* Typography System */
-h1, h2, h3 {{
+h1, h2, h3, h4 {{
     font-family: 'Playfair Display', Georgia, serif !important;
     color: {TEXT_PRIMARY} !important;
     font-weight: 700 !important;
@@ -97,13 +94,13 @@ h1, h2, h3 {{
 }}
 
 h1 {{
-    font-size: 2.3rem !important;
+    font-size: 2.2rem !important;
     line-height: 1.15 !important;
     margin-bottom: 0.25rem !important;
 }}
 
 h2 {{
-    font-size: 1.6rem !important;
+    font-size: 1.5rem !important;
     line-height: 1.25 !important;
     margin-top: 1.5rem !important;
     margin-bottom: 0.5rem !important;
@@ -213,19 +210,111 @@ hr {{
     color: {BG_COLOR} !important;
 }}
 
-/* Selectbox, Input, and Radio Refinement */
-div[data-baseweb="select"] > div {{
-    border-radius: 1px !important;
-    border-color: {BORDER_COLOR} !important;
-    background-color: {CARD_BG} !important;
+/* -------------------------------------------------------------------------
+   SELECTBOX, MULTISELECT, AND DROPDOWN STYLING (FIX UNREADABLE MENUS)
+   ------------------------------------------------------------------------- */
+
+/* Selectbox Label */
+.stSelectbox label, .stMultiSelect label, .stSlider label {{
     font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 0.82rem !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    color: {TEXT_PRIMARY} !important;
+    margin-bottom: 4px !important;
 }}
 
+/* BaseWeb Select Box Outer and Inner Container */
+div[data-baseweb="select"] {{
+    background-color: #FFFFFF !important;
+    border-radius: 1px !important;
+}}
+
+div[data-baseweb="select"] > div {{
+    background-color: #FFFFFF !important;
+    border: 1px solid {BORDER_COLOR} !important;
+    border-radius: 1px !important;
+    color: {TEXT_PRIMARY} !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.84rem !important;
+    min-height: 38px !important;
+}}
+
+div[data-baseweb="select"] > div:focus-within {{
+    border-color: {BORDER_DARK} !important;
+    box-shadow: 0 0 0 1px {BORDER_DARK} !important;
+}}
+
+div[data-baseweb="select"] span,
+div[data-baseweb="select"] div {{
+    color: {TEXT_PRIMARY} !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+}}
+
+/* Dropdown Arrow & Action Icons */
+div[data-baseweb="select"] svg {{
+    fill: {TEXT_PRIMARY} !important;
+    stroke: {TEXT_PRIMARY} !important;
+}}
+
+/* Dropdown Popover Container */
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] > div {{
+    background-color: #FFFFFF !important;
+    border: 1px solid {BORDER_COLOR} !important;
+    border-radius: 1px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}}
+
+/* Dropdown Menu & Listbox */
+ul[data-baseweb="menu"],
+div[data-baseweb="menu"],
+ul[role="listbox"],
+div[role="listbox"] {{
+    background-color: #FFFFFF !important;
+    color: {TEXT_PRIMARY} !important;
+    padding: 4px 0 !important;
+}}
+
+/* Dropdown Individual Option Items */
+li[role="option"],
+div[role="option"],
+ul[data-baseweb="menu"] li,
+div[data-baseweb="menu"] div[role="option"] {{
+    background-color: #FFFFFF !important;
+    color: {TEXT_PRIMARY} !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.82rem !important;
+    padding: 8px 14px !important;
+    cursor: pointer !important;
+    border-bottom: 1px solid #FAF8F5 !important;
+    transition: background-color 0.1s ease !important;
+}}
+
+/* Option Item Hover State */
+li[role="option"]:hover,
+div[role="option"]:hover,
+ul[data-baseweb="menu"] li:hover {{
+    background-color: #ECEAE2 !important;
+    color: {TEXT_PRIMARY} !important;
+}}
+
+/* Option Item Selected State */
+li[role="option"][aria-selected="true"],
+div[role="option"][aria-selected="true"],
+ul[data-baseweb="menu"] li[aria-selected="true"] {{
+    background-color: #E2DFD6 !important;
+    color: {TEXT_PRIMARY} !important;
+    font-weight: 600 !important;
+}}
+
+/* Input Box Refinement */
 div[data-baseweb="input"] > div {{
     border-radius: 1px !important;
     border-color: {BORDER_COLOR} !important;
     background-color: {CARD_BG} !important;
+    color: {TEXT_PRIMARY} !important;
     font-family: 'IBM Plex Mono', monospace !important;
 }}
 
@@ -281,6 +370,11 @@ div[data-testid="stDataFrame"] {{
 """
 
 
+def render_html(html_str: str):
+    """Safely render HTML without Markdown code-block indentation escaping."""
+    st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
+
+
 def apply_theme():
     """Inject global CSS rules into the current Streamlit page."""
     st.markdown(EDITORIAL_CSS, unsafe_allow_html=True)
@@ -289,40 +383,46 @@ def apply_theme():
 def render_sidebar():
     """Render the standard institutional brand sidebar."""
     with st.sidebar:
-        st.markdown(BRAND_HEADER_HTML, unsafe_allow_html=True)
-        st.markdown(
-            f"""
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: {TEXT_MUTED}; line-height: 1.6; padding: 0.5rem 0; border-top: 1px solid {BORDER_COLOR}; border-bottom: 1px solid {BORDER_COLOR}; margin-bottom: 1rem;">
-                <div>BULLETIN // HYDRO-RISK</div>
-                <div>STANDARD: SPATIOTEMPORAL V3</div>
-                <div>REFERENCE: CWC-BASIN-5</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        st.markdown(textwrap.dedent(BRAND_HEADER_HTML).strip(), unsafe_allow_html=True)
+        sidebar_meta = f"""
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: {TEXT_MUTED}; line-height: 1.6; padding: 0.5rem 0; border-top: 1px solid {BORDER_COLOR}; border-bottom: 1px solid {BORDER_COLOR}; margin-bottom: 1rem;">
+    <div>BULLETIN // HYDRO-RISK</div>
+    <div>STANDARD: SPATIOTEMPORAL V3</div>
+    <div>REFERENCE: CWC-BASIN-5</div>
+</div>
+"""
+        st.markdown(textwrap.dedent(sidebar_meta).strip(), unsafe_allow_html=True)
 
 
-def editorial_header(title: str, kicker: str = "HYDROLOGICAL RESEARCH ARCHIVE // SYSTEM REPORT", subtitle: str = None):
-    """Render a vintage editorial article/dashboard header."""
+def editorial_header(
+    title: str = "",
+    kicker: str = None,
+    subtitle: str = None,
+    section: str = None,
+    **kwargs,
+):
+    """Render a vintage editorial article/dashboard header.
+    
+    Accepts section, kicker, title, subtitle to support all caller conventions seamlessly.
+    """
+    top_label = section if section is not None else (kicker if kicker is not None else "HYDROLOGICAL RESEARCH ARCHIVE // SYSTEM REPORT")
     subtitle_html = (
         f'<div style="font-family: \'Libre Baskerville\', Georgia, serif; font-style: italic; font-size: 0.95rem; color: {TEXT_MUTED}; margin-top: 6px; max-width: 820px; line-height: 1.5;">{subtitle}</div>'
         if subtitle
         else ""
     )
-    st.markdown(
-        f"""
-        <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid {BORDER_COLOR};">
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: {TEXT_CAPTION}; margin-bottom: 4px;">{kicker}</div>
-            <h1 style="margin: 0; padding: 0;">{title}</h1>
-            {subtitle_html}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    header_html = f"""
+<div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid {BORDER_COLOR};">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: {TEXT_CAPTION}; margin-bottom: 4px;">{top_label}</div>
+    <h1 style="margin: 0; padding: 0;">{title}</h1>
+    {subtitle_html}
+</div>
+"""
+    st.markdown(textwrap.dedent(header_html).strip(), unsafe_allow_html=True)
 
 
 def kpi_card(title: str, value, caption: str = None, delta=None):
-    """Render a refined minimalist editorial metric card."""
+    """Render a refined minimalist editorial metric card without any raw HTML leaking."""
     delta_html = ""
     if delta is not None:
         delta_str = str(delta)
@@ -339,31 +439,27 @@ def kpi_card(title: str, value, caption: str = None, delta=None):
         else ""
     )
 
-    st.markdown(
-        f"""
-        <div style="background-color: {CARD_BG}; border: 1px solid {BORDER_COLOR}; padding: 1.1rem 1.25rem; border-radius: 1px; min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: {TEXT_MUTED};">{title}</div>
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 1.85rem; font-weight: 600; color: {TEXT_PRIMARY}; letter-spacing: -0.02em; margin-top: 4px; line-height: 1.1;">{value}</div>
-            {delta_html}
-            {caption_html}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    card_html = f"""
+<div style="background-color: {CARD_BG}; border: 1px solid {BORDER_COLOR}; padding: 1.1rem 1.25rem; border-radius: 1px; min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: {TEXT_MUTED};">{title}</div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 1.85rem; font-weight: 600; color: {TEXT_PRIMARY}; letter-spacing: -0.02em; margin-top: 4px; line-height: 1.1;">{value}</div>
+    {delta_html}
+    {caption_html}
+</div>
+"""
+    st.markdown(textwrap.dedent(card_html).strip(), unsafe_allow_html=True)
 
 
 def editorial_callout(text: str, label: str = "RESEARCH NOTE", level: str = "info"):
     """Render an archival marginal note or technical warning."""
     indicator_color = BORDER_DARK if level == "info" else "#B45309"
-    st.markdown(
-        f"""
-        <div style="background-color: {CARD_BG_MUTED}; border-left: 3px solid {indicator_color}; border-top: 1px solid {BORDER_COLOR}; border-right: 1px solid {BORDER_COLOR}; border-bottom: 1px solid {BORDER_COLOR}; padding: 0.85rem 1.15rem; margin: 1rem 0; border-radius: 1px;">
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: {TEXT_MUTED}; margin-bottom: 3px;">// {label}</div>
-            <div style="font-family: 'Inter', sans-serif; font-size: 0.86rem; color: {TEXT_PRIMARY}; line-height: 1.45;">{text}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    callout_html = f"""
+<div style="background-color: {CARD_BG_MUTED}; border-left: 3px solid {indicator_color}; border-top: 1px solid {BORDER_COLOR}; border-right: 1px solid {BORDER_COLOR}; border-bottom: 1px solid {BORDER_COLOR}; padding: 0.85rem 1.15rem; margin: 1rem 0; border-radius: 1px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: {TEXT_MUTED}; margin-bottom: 3px;">// {label}</div>
+    <div style="font-family: 'Inter', sans-serif; font-size: 0.86rem; color: {TEXT_PRIMARY}; line-height: 1.45;">{text}</div>
+</div>
+"""
+    st.markdown(textwrap.dedent(callout_html).strip(), unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------
@@ -376,7 +472,7 @@ def style_plotly_chart(fig: go.Figure, height: int = 380) -> go.Figure:
         paper_bgcolor=BG_COLOR,
         plot_bgcolor="#FFFFFF",
         height=height,
-        margin=dict(l=40, r=25, t=45, b=40),
+        margin=dict(l=45, r=25, t=45, b=45),
         font=dict(
             family="IBM Plex Mono, monospace",
             size=11,
@@ -392,25 +488,25 @@ def style_plotly_chart(fig: go.Figure, height: int = 380) -> go.Figure:
             y=0.96,
         ),
         legend=dict(
-            bgcolor="rgba(255,255,255,0.85)",
+            bgcolor="rgba(255,255,255,0.92)",
             bordercolor=BORDER_COLOR,
             borderwidth=1,
-            font=dict(size=10, family="IBM Plex Mono, monospace"),
+            font=dict(size=10, family="IBM Plex Mono, monospace", color=TEXT_PRIMARY),
         ),
         xaxis=dict(
             gridcolor="#ECE8DF",
             linecolor=BORDER_COLOR,
             linewidth=1,
-            tickfont=dict(size=10, family="IBM Plex Mono, monospace"),
-            title_font=dict(size=11, family="IBM Plex Mono, monospace"),
+            tickfont=dict(size=10, family="IBM Plex Mono, monospace", color=TEXT_PRIMARY),
+            title_font=dict(size=11, family="IBM Plex Mono, monospace", color=TEXT_PRIMARY),
             zeroline=False,
         ),
         yaxis=dict(
             gridcolor="#ECE8DF",
             linecolor=BORDER_COLOR,
             linewidth=1,
-            tickfont=dict(size=10, family="IBM Plex Mono, monospace"),
-            title_font=dict(size=11, family="IBM Plex Mono, monospace"),
+            tickfont=dict(size=10, family="IBM Plex Mono, monospace", color=TEXT_PRIMARY),
+            title_font=dict(size=11, family="IBM Plex Mono, monospace", color=TEXT_PRIMARY),
             zeroline=False,
         ),
     )

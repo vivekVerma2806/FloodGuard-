@@ -15,6 +15,7 @@ from src.ui_theme import (
     editorial_header,
     kpi_card,
     editorial_callout,
+    render_html,
     TEXT_MUTED,
 )
 
@@ -45,13 +46,12 @@ def main():
     # -------------------------------------------------------------------------
     # Ingestion Source Selector
     # -------------------------------------------------------------------------
-    st.markdown(
+    render_html(
         f"""
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-bottom: 0.5rem;">
             // TELEMETRY SOURCE SELECTION
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
     source = st.radio(
         "Telemetry source:",
@@ -85,13 +85,12 @@ def main():
             return
         try:
             df = load_data(demo_path)
-            st.markdown(
+            render_html(
                 f"""
                 <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: #2E6930; margin-bottom: 1rem;">
                     [OK] Archival telemetry loaded: {len(df):,} daily records across 5 river basins.
                 </div>
-                """,
-                unsafe_allow_html=True,
+                """
             )
         except Exception as exc:
             st.error(f"Error loading demo dataset: {exc}")
@@ -108,13 +107,12 @@ def main():
     # -------------------------------------------------------------------------
     # Raw Data Ledger & Schema Audit
     # -------------------------------------------------------------------------
-    st.markdown(
+    render_html(
         f"""
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-top: 1rem; margin-bottom: 0.5rem;">
             // RAW TELEMETRY SCHEMA & SUMMARY AUDIT
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     c1, c2, c3, c4 = st.columns(4)
@@ -144,13 +142,12 @@ def main():
     # -------------------------------------------------------------------------
     # Data Cleaning Pipeline
     # -------------------------------------------------------------------------
-    st.markdown(
+    render_html(
         f"""
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-bottom: 0.5rem;">
             // STEP 01: QUALITY AUDIT & RECTIFICATION
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
     col_btn_clean, col_info_clean = st.columns([1, 3])
     with col_btn_clean:
@@ -171,7 +168,7 @@ def main():
 
                 st.session_state["clean_df"] = df_clean
 
-                st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+                render_html("<div style='height: 10px;'></div>")
                 r1, r2, r3, r4 = st.columns(4)
                 with r1:
                     kpi_card("Pre-Clean Missing", missing_before)
@@ -194,13 +191,12 @@ def main():
     # Feature Engineering Pipeline
     # -------------------------------------------------------------------------
     st.markdown("---")
-    st.markdown(
+    render_html(
         f"""
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-bottom: 0.5rem;">
             // STEP 02: HYDROLOGICAL FEATURE SYNTHESIS
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
     clean_target = st.session_state.get("clean_df")
 

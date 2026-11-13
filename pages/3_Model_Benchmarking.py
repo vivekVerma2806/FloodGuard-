@@ -19,6 +19,7 @@ from src.ui_theme import (
     editorial_header,
     kpi_card,
     editorial_callout,
+    render_html,
     style_plotly_chart,
     TEXT_MUTED,
 )
@@ -86,13 +87,12 @@ def main():
         editorial_callout("Insufficient attributes for regression modeling. Run feature engineering.", label="ATTRIBUTE DEFICIT", level="warning")
         return
 
-    st.markdown(
+    render_html(
         f"""
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: {TEXT_MUTED}; margin-bottom: 1rem;">
             // PREDICTORS ({len(available_features)}): {', '.join(available_features)}
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     # -------------------------------------------------------------------------
@@ -134,13 +134,12 @@ def main():
         features = st.session_state["bench_features"]
 
         st.markdown("---")
-        st.markdown(
+        render_html(
             f"""
             <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: {TEXT_MUTED}; margin-bottom: 0.75rem;">
                 // STATISTICAL ESTIMATOR COMPARISON LEDGER
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         best_row = results_df.iloc[0]
@@ -152,13 +151,13 @@ def main():
         with c3:
             kpi_card("Minimum Test MAE", f"{best_row['MAE']:.4f}", caption="Mean absolute error")
 
-        st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+        render_html("<div style='height: 12px;'></div>")
         st.dataframe(results_df, use_container_width=True, hide_index=True)
 
         # ---------------------------------------------------------------------
         # Visual Error Comparison
         # ---------------------------------------------------------------------
-        st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+        render_html("<div style='height: 16px;'></div>")
         fig_bar = go.Figure()
         fig_bar.add_trace(
             go.Bar(
@@ -193,13 +192,12 @@ def main():
         with tab_importance:
             col_rf, col_gb = st.columns(2)
             with col_rf:
-                st.markdown(
+                render_html(
                     f"""
                     <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: {TEXT_MUTED}; margin-bottom: 0.5rem;">
                         // RANDOM FOREST GINI WEIGHTS
                     </div>
-                    """,
-                    unsafe_allow_html=True,
+                    """
                 )
                 if "Random Forest" in models_dict:
                     rf_model = models_dict["Random Forest"][0]
@@ -216,13 +214,12 @@ def main():
                     st.plotly_chart(fig_fi_rf, use_container_width=True)
 
             with col_gb:
-                st.markdown(
+                render_html(
                     f"""
                     <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: {TEXT_MUTED}; margin-bottom: 0.5rem;">
                         // GRADIENT BOOSTING RESIDUAL WEIGHTS
                     </div>
-                    """,
-                    unsafe_allow_html=True,
+                    """
                 )
                 if "Gradient Boosting" in models_dict:
                     gb_model = models_dict["Gradient Boosting"][0]

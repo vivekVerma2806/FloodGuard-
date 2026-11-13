@@ -15,6 +15,7 @@ from src.ui_theme import (
     editorial_header,
     editorial_callout,
     kpi_card,
+    render_html,
     style_plotly_chart,
 )
 
@@ -146,14 +147,13 @@ def main():
 
     # ── LSTM Summary ─────────────────────────────────────────────────────
     if lstm_metrics:
-        st.markdown(
+        render_html(
             """
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                         text-transform:uppercase;color:#666666;margin:1.4rem 0 0.5rem 0;">
                 I. MULTIVARIATE RECURRENT LSTM TELEMETRY
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -166,14 +166,13 @@ def main():
 
     # ── Benchmarking Summary ─────────────────────────────────────────────
     if bench_df is not None:
-        st.markdown(
+        render_html(
             """
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                         text-transform:uppercase;color:#666666;margin:1.8rem 0 0.5rem 0;">
                 II. REGRESSION BENCHMARKING AUDIT
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         m_col = "Model" if "Model" in bench_df.columns else "model"
@@ -209,14 +208,13 @@ def main():
 
     # ── Risk Classification Summary ──────────────────────────────────────
     if risk_metrics:
-        st.markdown(
+        render_html(
             """
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                         text-transform:uppercase;color:#666666;margin:1.8rem 0 0.5rem 0;">
                 III. OPERATIONAL THREAT TIER CLASSIFICATION
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
         cols = st.columns(4)
         prec = risk_metrics.get("precision", "N/A")
@@ -234,34 +232,31 @@ def main():
             kpi_card("PR-AUC (MACRO)", f"{pr_auc:.4f}" if isinstance(pr_auc, float) else str(pr_auc), "Area under PR curve")
 
     # ── Recommendations ──────────────────────────────────────────────────
-    st.markdown(
+    render_html(
         """
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                     text-transform:uppercase;color:#666666;margin:2rem 0 0.5rem 0;">
             IV. FIELD ADVISORIES & SYNTHESIS RECOMMENDATIONS
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
     for rec in _recommendations(lstm_metrics, bench_df, risk_metrics):
-        st.markdown(
+        render_html(
             f"""
             <div style="padding:0.75rem 1rem;background:#FFFFFF;border:1px solid #D6D3CC;margin-bottom:0.5rem;font-size:13.5px;color:#171717;">
                 {rec}
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
     # ── Download report ──────────────────────────────────────────────────
-    st.markdown(
+    render_html(
         """
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
                     text-transform:uppercase;color:#666666;margin:2rem 0 0.5rem 0;">
             V. REPORT SERIALIZATION & EXPORT
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     report_text = _build_report_text(lstm_metrics, bench_df, risk_metrics)

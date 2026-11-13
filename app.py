@@ -16,6 +16,7 @@ from src.ui_theme import (
     editorial_header,
     kpi_card,
     editorial_callout,
+    render_html,
     style_plotly_chart,
     BORDER_COLOR,
     CARD_BG,
@@ -78,7 +79,7 @@ def main():
     with c4:
         kpi_card("Mean River Stage", f"{df['river_level_m'].mean():.2f} m", caption="Surface elevation gauge datum")
 
-    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+    render_html("<div style='height: 18px;'></div>")
 
     # -------------------------------------------------------------------------
     # Scientific Visualizations
@@ -155,13 +156,12 @@ def main():
         st.plotly_chart(fig_level, use_container_width=True)
 
     with tab_stations:
-        st.markdown(
+        render_html(
             f"""
             <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.1em; color: {TEXT_MUTED}; margin-bottom: 0.75rem;">
                 // SENTINEL MONITORING NETWORK METADATA & RECENT OBSERVATIONS
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
         latest_summary = []
         for stn in DEMO_STATIONS:
