@@ -6,7 +6,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![GeoPandas](https://img.shields.io/badge/GeoPandas-1.x-139C5A?style=for-the-badge)](https://geopandas.org/)
 [![Plotly](https://img.shields.io/badge/Plotly-5.x-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)](https://plotly.com/)
-[![Tests](https://img.shields.io/badge/Tests-30%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-36%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
 
 An end-to-end, production-grade Machine Learning and Spatiotemporal Analytics system for river-level forecasting, flood risk classification, model benchmarking, and interactive geospatial mapping.
 
@@ -195,13 +195,14 @@ pytest tests/ -v
 
 ### Test Suite Summary:
 ```
-tests/test_data_preprocessing.py  ...... [ 23%]
-tests/test_geospatial.py          ....... [ 46%]
-tests/test_lstm_model.py          ...... [ 66%]
-tests/test_ml_benchmarking.py     ...... [ 86%]
-tests/test_risk_classification.py ....   [100%]
+tests/test_data_preprocessing.py    ...... [ 19%]
+tests/test_geospatial.py            ....... [ 38%]
+tests/test_lstm_model.py            ...... [ 55%]
+tests/test_ml_benchmarking.py       ...... [ 72%]
+tests/test_pipeline_integration.py  ...... [ 88%]
+tests/test_risk_classification.py   ....   [100%]
 
-====================== 30 passed in 23.28s ======================
+====================== 36 passed in 26.67s ======================
 ```
 - Preprocessing validation (missing value imputation, chronological integrity, sliding-window geometry).
 - LSTM lifecycle testing (construction, gradient descent execution, prediction shapes, serialization).
