@@ -9,7 +9,6 @@ Visual Direction:
   IBM Plex Mono (metrics, timestamps, scientific notation)
 """
 
-import textwrap
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -40,35 +39,9 @@ RISK_PALETTE = RISK_COLORS   # Alias for backward compatibility
 # -----------------------------------------------------------------------------
 # Custom Vector SVG Brand Mark
 # -----------------------------------------------------------------------------
-BRAND_LOGO_SVG = """
-<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="1.5" y="1.5" width="45" height="45" stroke="#171717" stroke-width="1.2"/>
-  <line x1="1.5" y1="8" x2="6" y2="8" stroke="#171717" stroke-width="1"/>
-  <line x1="8" y1="1.5" x2="8" y2="6" stroke="#171717" stroke-width="1"/>
-  <line x1="42" y1="8" x2="46.5" y2="8" stroke="#171717" stroke-width="1"/>
-  <line x1="40" y1="1.5" x2="40" y2="6" stroke="#171717" stroke-width="1"/>
-  <line x1="1.5" y1="40" x2="6" y2="40" stroke="#171717" stroke-width="1"/>
-  <line x1="8" y1="42" x2="8" y2="46.5" stroke="#171717" stroke-width="1"/>
-  <line x1="42" y1="40" x2="46.5" y2="40" stroke="#171717" stroke-width="1"/>
-  <line x1="40" y1="42" x2="40" y2="46.5" stroke="#171717" stroke-width="1"/>
-  <path d="M 6 36 C 14 36, 18 30, 24 30 C 30 30, 34 34, 42 34" stroke="#171717" stroke-width="1.2" fill="none"/>
-  <path d="M 6 27 C 13 27, 17 21, 24 21 C 31 21, 35 25, 42 25" stroke="#171717" stroke-width="1.5" fill="none"/>
-  <path d="M 6 18 C 12 18, 16 12, 24 12 C 32 12, 36 16, 42 16" stroke="#171717" stroke-width="1.2" fill="none"/>
-  <circle cx="24" cy="21" r="2.5" fill="#171717"/>
-  <line x1="24" y1="6" x2="24" y2="10" stroke="#171717" stroke-width="1"/>
-  <line x1="24" y1="32" x2="24" y2="42" stroke="#171717" stroke-width="1" stroke-dasharray="2 2"/>
-</svg>
-"""
+BRAND_LOGO_SVG = """<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="1.5" width="45" height="45" stroke="#171717" stroke-width="1.2"/><line x1="1.5" y1="8" x2="6" y2="8" stroke="#171717" stroke-width="1"/><line x1="8" y1="1.5" x2="8" y2="6" stroke="#171717" stroke-width="1"/><line x1="42" y1="8" x2="46.5" y2="8" stroke="#171717" stroke-width="1"/><line x1="40" y1="1.5" x2="40" y2="6" stroke="#171717" stroke-width="1"/><line x1="1.5" y1="40" x2="6" y2="40" stroke="#171717" stroke-width="1"/><line x1="8" y1="42" x2="8" y2="46.5" stroke="#171717" stroke-width="1"/><line x1="42" y1="40" x2="46.5" y2="40" stroke="#171717" stroke-width="1"/><line x1="40" y1="42" x2="40" y2="46.5" stroke="#171717" stroke-width="1"/><path d="M 6 36 C 14 36, 18 30, 24 30 C 30 30, 34 34, 42 34" stroke="#171717" stroke-width="1.2" fill="none"/><path d="M 6 27 C 13 27, 17 21, 24 21 C 31 21, 35 25, 42 25" stroke="#171717" stroke-width="1.5" fill="none"/><path d="M 6 18 C 12 18, 16 12, 24 12 C 32 12, 36 16, 42 16" stroke="#171717" stroke-width="1.2" fill="none"/><circle cx="24" cy="21" r="2.5" fill="#171717"/><line x1="24" y1="6" x2="24" y2="10" stroke="#171717" stroke-width="1"/><line x1="24" y1="32" x2="24" y2="42" stroke="#171717" stroke-width="1" stroke-dasharray="2 2"/></svg>"""
 
-BRAND_HEADER_HTML = f"""
-<div style="display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid {BORDER_COLOR};">
-  <div>{BRAND_LOGO_SVG}</div>
-  <div>
-    <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.35rem; font-weight: 700; letter-spacing: 0.18em; color: {TEXT_PRIMARY}; line-height: 1.1;">FLOODGUARD</div>
-    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: {TEXT_MUTED}; margin-top: 3px;">SPATIOTEMPORAL RISK INTELLIGENCE</div>
-  </div>
-</div>
-"""
+BRAND_HEADER_HTML = f"""<div style="display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid {BORDER_COLOR};"><div>{BRAND_LOGO_SVG}</div><div><div style="font-family:'Playfair Display',Georgia,serif;font-size:1.35rem;font-weight:700;letter-spacing:0.18em;color:{TEXT_PRIMARY};line-height:1.1;">FLOODGUARD</div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:{TEXT_MUTED};margin-top:3px;">SPATIOTEMPORAL RISK INTELLIGENCE</div></div></div>"""
 
 # -----------------------------------------------------------------------------
 # Global Editorial CSS Injection
@@ -156,6 +129,19 @@ section[data-testid="stSidebar"] [data-testid="stSidebarNavLink"][aria-current="
     font-weight: 600 !important;
 }}
 
+/* Rename the root 'app' page link to 'Overview' in sidebar navigation */
+[data-testid="stSidebarNav"] li:first-child [data-testid="stSidebarNavLink"] span {{
+    display: none !important;
+}}
+[data-testid="stSidebarNav"] li:first-child [data-testid="stSidebarNavLink"]::after {{
+    content: "Overview" !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.05em !important;
+    color: #171717 !important;
+    display: inline-block !important;
+}}
+
 /* Clean Hairline Dividers */
 hr {{
     border: none !important;
@@ -163,58 +149,88 @@ hr {{
     margin: 1.75rem 0 !important;
 }}
 
-/* Editorial Buttons - Minimal Dark Inset */
-.stButton > button {{
+/* -------------------------------------------------------------------------
+   EDITORIAL BUTTONS (WHITE CARD STYLE — FIX BLACK SOLID BOXES)
+   ------------------------------------------------------------------------- */
+.stButton > button,
+div[data-testid="stButton"] > button {{
     font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 0.78rem !important;
+    font-size: 0.82rem !important;
     font-weight: 600 !important;
-    letter-spacing: 0.12em !important;
+    letter-spacing: 0.08em !important;
     text-transform: uppercase !important;
-    border-radius: 1px !important;
-    border: 1px solid {BORDER_DARK} !important;
-    background-color: {BORDER_DARK} !important;
-    color: {BG_COLOR} !important;
-    padding: 0.55rem 1.25rem !important;
-    box-shadow: none !important;
-    transition: all 0.15s ease;
+    border-radius: 2px !important;
+    border: 1.5px solid #171717 !important;
+    background-color: #FFFFFF !important;
+    color: #171717 !important;
+    padding: 0.6rem 1.4rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.15s ease-in-out !important;
+    cursor: pointer !important;
 }}
 
-.stButton > button:hover {{
-    background-color: #383838 !important;
-    border-color: #383838 !important;
-    color: #FFFFFF !important;
+.stButton > button:hover,
+div[data-testid="stButton"] > button:hover {{
+    background-color: #ECEAE2 !important;
+    border-color: #000000 !important;
+    color: #000000 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
 }}
 
-.stButton > button:active {{
-    background-color: #000000 !important;
+.stButton > button:active,
+div[data-testid="stButton"] > button:active {{
+    background-color: #D6D3CC !important;
+    color: #000000 !important;
+}}
+
+.stButton > button p,
+.stButton > button span,
+.stButton > button div,
+div[data-testid="stButton"] > button p,
+div[data-testid="stButton"] > button span {{
+    color: #171717 !important;
+    font-weight: 600 !important;
+    font-family: 'IBM Plex Mono', monospace !important;
 }}
 
 /* Secondary / Download Buttons */
-.stDownloadButton > button {{
+.stDownloadButton > button,
+div[data-testid="stDownloadButton"] > button {{
     font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 0.78rem !important;
+    font-size: 0.82rem !important;
     font-weight: 600 !important;
-    letter-spacing: 0.12em !important;
+    letter-spacing: 0.08em !important;
     text-transform: uppercase !important;
-    border-radius: 1px !important;
-    border: 1px solid {BORDER_DARK} !important;
-    background-color: transparent !important;
-    color: {BORDER_DARK} !important;
-    padding: 0.55rem 1.25rem !important;
-    box-shadow: none !important;
-    transition: all 0.15s ease;
+    border-radius: 2px !important;
+    border: 1.5px solid #171717 !important;
+    background-color: #FFFFFF !important;
+    color: #171717 !important;
+    padding: 0.6rem 1.4rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.15s ease-in-out !important;
+    cursor: pointer !important;
 }}
 
-.stDownloadButton > button:hover {{
-    background-color: {BORDER_DARK} !important;
-    color: {BG_COLOR} !important;
+.stDownloadButton > button:hover,
+div[data-testid="stDownloadButton"] > button:hover {{
+    background-color: #ECEAE2 !important;
+    border-color: #000000 !important;
+    color: #000000 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}}
+
+.stDownloadButton > button p,
+.stDownloadButton > button span,
+div[data-testid="stDownloadButton"] > button p,
+div[data-testid="stDownloadButton"] > button span {{
+    color: #171717 !important;
+    font-weight: 600 !important;
+    font-family: 'IBM Plex Mono', monospace !important;
 }}
 
 /* -------------------------------------------------------------------------
-   SELECTBOX, MULTISELECT, AND DROPDOWN STYLING (FIX UNREADABLE MENUS)
+   SELECTBOX, MULTISELECT, AND DROPDOWN STYLING
    ------------------------------------------------------------------------- */
-
-/* Selectbox Label */
 .stSelectbox label, .stMultiSelect label, .stSlider label {{
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.78rem !important;
@@ -225,7 +241,6 @@ hr {{
     margin-bottom: 4px !important;
 }}
 
-/* BaseWeb Select Box Outer and Inner Container */
 div[data-baseweb="select"] {{
     background-color: #FFFFFF !important;
     border-radius: 1px !important;
@@ -252,13 +267,11 @@ div[data-baseweb="select"] div {{
     font-family: 'IBM Plex Mono', monospace !important;
 }}
 
-/* Dropdown Arrow & Action Icons */
 div[data-baseweb="select"] svg {{
     fill: {TEXT_PRIMARY} !important;
     stroke: {TEXT_PRIMARY} !important;
 }}
 
-/* Dropdown Popover Container */
 div[data-baseweb="popover"],
 div[data-baseweb="popover"] > div {{
     background-color: #FFFFFF !important;
@@ -267,7 +280,6 @@ div[data-baseweb="popover"] > div {{
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
 }}
 
-/* Dropdown Menu & Listbox */
 ul[data-baseweb="menu"],
 div[data-baseweb="menu"],
 ul[role="listbox"],
@@ -277,7 +289,6 @@ div[role="listbox"] {{
     padding: 4px 0 !important;
 }}
 
-/* Dropdown Individual Option Items */
 li[role="option"],
 div[role="option"],
 ul[data-baseweb="menu"] li,
@@ -292,7 +303,6 @@ div[data-baseweb="menu"] div[role="option"] {{
     transition: background-color 0.1s ease !important;
 }}
 
-/* Option Item Hover State */
 li[role="option"]:hover,
 div[role="option"]:hover,
 ul[data-baseweb="menu"] li:hover {{
@@ -300,7 +310,6 @@ ul[data-baseweb="menu"] li:hover {{
     color: {TEXT_PRIMARY} !important;
 }}
 
-/* Option Item Selected State */
 li[role="option"][aria-selected="true"],
 div[role="option"][aria-selected="true"],
 ul[data-baseweb="menu"] li[aria-selected="true"] {{
@@ -316,13 +325,6 @@ div[data-baseweb="input"] > div {{
     background-color: {CARD_BG} !important;
     color: {TEXT_PRIMARY} !important;
     font-family: 'IBM Plex Mono', monospace !important;
-}}
-
-/* Metric Cards & Data Tables */
-div[data-testid="stMetricValue"] {{
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-weight: 600 !important;
-    color: {TEXT_PRIMARY} !important;
 }}
 
 /* Tabs Styling */
@@ -347,18 +349,25 @@ div[data-testid="stMetricValue"] {{
     border-bottom: 2px solid {BORDER_DARK} !important;
 }}
 
-/* Expanders */
+/* -------------------------------------------------------------------------
+   EXPANDERS (FIX ARROW LIGATURE CORRUPTION arrlnspecfh-)
+   ------------------------------------------------------------------------- */
 div[data-testid="stExpander"] {{
     border: 1px solid {BORDER_COLOR} !important;
     border-radius: 1px !important;
     background-color: {CARD_BG} !important;
 }}
 
-div[data-testid="stExpander"] details summary span {{
-    font-family: 'IBM Plex Mono', monospace !important;
-    font-size: 0.8rem !important;
-    letter-spacing: 0.05em !important;
+div[data-testid="stExpander"] summary {{
     color: {TEXT_PRIMARY} !important;
+}}
+
+div[data-testid="stExpander"] summary p {{
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.04em !important;
+    color: {TEXT_PRIMARY} !important;
+    font-weight: 600 !important;
 }}
 
 /* DataFrames */
@@ -372,7 +381,9 @@ div[data-testid="stDataFrame"] {{
 
 def render_html(html_str: str):
     """Safely render HTML without Markdown code-block indentation escaping."""
-    st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
+    lines = [line.strip() for line in html_str.strip().splitlines() if line.strip()]
+    clean_html = "".join(lines)
+    st.markdown(clean_html, unsafe_allow_html=True)
 
 
 def apply_theme():
@@ -383,15 +394,9 @@ def apply_theme():
 def render_sidebar():
     """Render the standard institutional brand sidebar."""
     with st.sidebar:
-        st.markdown(textwrap.dedent(BRAND_HEADER_HTML).strip(), unsafe_allow_html=True)
-        sidebar_meta = f"""
-<div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: {TEXT_MUTED}; line-height: 1.6; padding: 0.5rem 0; border-top: 1px solid {BORDER_COLOR}; border-bottom: 1px solid {BORDER_COLOR}; margin-bottom: 1rem;">
-    <div>BULLETIN // HYDRO-RISK</div>
-    <div>STANDARD: SPATIOTEMPORAL V3</div>
-    <div>REFERENCE: CWC-BASIN-5</div>
-</div>
-"""
-        st.markdown(textwrap.dedent(sidebar_meta).strip(), unsafe_allow_html=True)
+        st.markdown(BRAND_HEADER_HTML, unsafe_allow_html=True)
+        sidebar_meta = f"""<div style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:{TEXT_MUTED};line-height:1.6;padding:0.5rem 0;border-top:1px solid {BORDER_COLOR};border-bottom:1px solid {BORDER_COLOR};margin-bottom:1rem;"><div>BULLETIN // HYDRO-RISK</div><div>STANDARD: SPATIOTEMPORAL V3</div><div>REFERENCE: CWC-BASIN-5</div></div>"""
+        st.markdown(sidebar_meta, unsafe_allow_html=True)
 
 
 def editorial_header(
@@ -401,65 +406,59 @@ def editorial_header(
     section: str = None,
     **kwargs,
 ):
-    """Render a vintage editorial article/dashboard header.
-    
-    Accepts section, kicker, title, subtitle to support all caller conventions seamlessly.
-    """
+    """Render a vintage editorial article/dashboard header seamlessly."""
     top_label = section if section is not None else (kicker if kicker is not None else "HYDROLOGICAL RESEARCH ARCHIVE // SYSTEM REPORT")
     subtitle_html = (
-        f'<div style="font-family: \'Libre Baskerville\', Georgia, serif; font-style: italic; font-size: 0.95rem; color: {TEXT_MUTED}; margin-top: 6px; max-width: 820px; line-height: 1.5;">{subtitle}</div>'
+        f'<div style="font-family:\'Libre Baskerville\',Georgia,serif;font-style:italic;font-size:0.95rem;color:{TEXT_MUTED};margin-top:6px;max-width:820px;line-height:1.5;">{subtitle}</div>'
         if subtitle
         else ""
     )
-    header_html = f"""
-<div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid {BORDER_COLOR};">
-    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: {TEXT_CAPTION}; margin-bottom: 4px;">{top_label}</div>
-    <h1 style="margin: 0; padding: 0;">{title}</h1>
-    {subtitle_html}
-</div>
-"""
-    st.markdown(textwrap.dedent(header_html).strip(), unsafe_allow_html=True)
+    header_html = (
+        f'<div style="margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid {BORDER_COLOR};">'
+        f'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;color:{TEXT_CAPTION};margin-bottom:4px;">{top_label}</div>'
+        f'<h1 style="margin:0;padding:0;">{title}</h1>'
+        f'{subtitle_html}'
+        f'</div>'
+    )
+    st.markdown(header_html, unsafe_allow_html=True)
 
 
 def kpi_card(title: str, value, caption: str = None, delta=None):
-    """Render a refined minimalist editorial metric card without any raw HTML leaking."""
+    """Render a clean minimalist editorial metric card with ZERO raw HTML leakage."""
     delta_html = ""
     if delta is not None:
         delta_str = str(delta)
-        delta_color = TEXT_MUTED
-        if delta_str.startswith("-"):
-            delta_color = "#2E6930"  # reduction in risk/error
-        elif delta_str.startswith("+"):
-            delta_color = "#B45309"
-        delta_html = f'<div style="font-family: \'IBM Plex Mono\', monospace; font-size: 0.72rem; color: {delta_color}; margin-top: 4px;">{delta_str}</div>'
+        delta_color = "#2E6930" if delta_str.startswith("-") else ("#B45309" if delta_str.startswith("+") else TEXT_MUTED)
+        delta_html = f'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.72rem;color:{delta_color};margin-top:4px;">{delta_str}</div>'
 
     caption_html = (
-        f'<div style="font-family: \'Inter\', sans-serif; font-size: 0.74rem; color: {TEXT_MUTED}; margin-top: 4px; line-height: 1.3;">{caption}</div>'
+        f'<div style="font-family:\'Inter\',sans-serif;font-size:0.74rem;color:{TEXT_MUTED};margin-top:4px;line-height:1.3;">{caption}</div>'
         if caption
         else ""
     )
 
-    card_html = f"""
-<div style="background-color: {CARD_BG}; border: 1px solid {BORDER_COLOR}; padding: 1.1rem 1.25rem; border-radius: 1px; min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: {TEXT_MUTED};">{title}</div>
-    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 1.85rem; font-weight: 600; color: {TEXT_PRIMARY}; letter-spacing: -0.02em; margin-top: 4px; line-height: 1.1;">{value}</div>
-    {delta_html}
-    {caption_html}
-</div>
-"""
-    st.markdown(textwrap.dedent(card_html).strip(), unsafe_allow_html=True)
+    card_html = (
+        f'<div style="background-color:{CARD_BG};border:1px solid {BORDER_COLOR};padding:1.1rem 1.25rem;'
+        f'border-radius:1px;min-height:110px;display:flex;flex-direction:column;justify-content:space-between;">'
+        f'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:{TEXT_MUTED};">{title}</div>'
+        f'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:1.85rem;font-weight:600;color:{TEXT_PRIMARY};letter-spacing:-0.02em;margin-top:4px;line-height:1.1;">{value}</div>'
+        f'{delta_html}'
+        f'{caption_html}'
+        f'</div>'
+    )
+    st.markdown(card_html, unsafe_allow_html=True)
 
 
 def editorial_callout(text: str, label: str = "RESEARCH NOTE", level: str = "info"):
     """Render an archival marginal note or technical warning."""
     indicator_color = BORDER_DARK if level == "info" else "#B45309"
-    callout_html = f"""
-<div style="background-color: {CARD_BG_MUTED}; border-left: 3px solid {indicator_color}; border-top: 1px solid {BORDER_COLOR}; border-right: 1px solid {BORDER_COLOR}; border-bottom: 1px solid {BORDER_COLOR}; padding: 0.85rem 1.15rem; margin: 1rem 0; border-radius: 1px;">
-    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: {TEXT_MUTED}; margin-bottom: 3px;">// {label}</div>
-    <div style="font-family: 'Inter', sans-serif; font-size: 0.86rem; color: {TEXT_PRIMARY}; line-height: 1.45;">{text}</div>
-</div>
-"""
-    st.markdown(textwrap.dedent(callout_html).strip(), unsafe_allow_html=True)
+    callout_html = (
+        f'<div style="background-color:{CARD_BG_MUTED};border-left:3px solid {indicator_color};border-top:1px solid {BORDER_COLOR};border-right:1px solid {BORDER_COLOR};border-bottom:1px solid {BORDER_COLOR};padding:0.85rem 1.15rem;margin:1rem 0;border-radius:1px;">'
+        f'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.64rem;letter-spacing:0.14em;text-transform:uppercase;color:{TEXT_MUTED};margin-bottom:3px;">// {label}</div>'
+        f'<div style="font-family:\'Inter\',sans-serif;font-size:0.86rem;color:{TEXT_PRIMARY};line-height:1.45;">{text}</div>'
+        f'</div>'
+    )
+    st.markdown(callout_html, unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------
