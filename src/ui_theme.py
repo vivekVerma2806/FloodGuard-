@@ -153,7 +153,11 @@ hr {{
    EDITORIAL BUTTONS (WHITE CARD STYLE — FIX BLACK SOLID BOXES)
    ------------------------------------------------------------------------- */
 .stButton > button,
-div[data-testid="stButton"] > button {{
+div[data-testid="stButton"] > button,
+button[kind="primary"],
+button[data-testid="baseButton-primary"],
+button[kind="secondary"],
+button[data-testid="baseButton-secondary"] {{
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 0.82rem !important;
     font-weight: 600 !important;
@@ -170,7 +174,11 @@ div[data-testid="stButton"] > button {{
 }}
 
 .stButton > button:hover,
-div[data-testid="stButton"] > button:hover {{
+div[data-testid="stButton"] > button:hover,
+button[kind="primary"]:hover,
+button[data-testid="baseButton-primary"]:hover,
+button[kind="secondary"]:hover,
+button[data-testid="baseButton-secondary"]:hover {{
     background-color: #ECEAE2 !important;
     border-color: #000000 !important;
     color: #000000 !important;
@@ -178,7 +186,9 @@ div[data-testid="stButton"] > button:hover {{
 }}
 
 .stButton > button:active,
-div[data-testid="stButton"] > button:active {{
+div[data-testid="stButton"] > button:active,
+button[kind="primary"]:active,
+button[data-testid="baseButton-primary"]:active {{
     background-color: #D6D3CC !important;
     color: #000000 !important;
 }}
@@ -187,7 +197,20 @@ div[data-testid="stButton"] > button:active {{
 .stButton > button span,
 .stButton > button div,
 div[data-testid="stButton"] > button p,
-div[data-testid="stButton"] > button span {{
+div[data-testid="stButton"] > button span,
+div[data-testid="stButton"] > button div,
+button[kind="primary"] p,
+button[kind="primary"] span,
+button[kind="primary"] div,
+button[data-testid="baseButton-primary"] p,
+button[data-testid="baseButton-primary"] span,
+button[data-testid="baseButton-primary"] div,
+button[kind="secondary"] p,
+button[kind="secondary"] span,
+button[kind="secondary"] div,
+button[data-testid="baseButton-secondary"] p,
+button[data-testid="baseButton-secondary"] span,
+button[data-testid="baseButton-secondary"] div {{
     color: #171717 !important;
     font-weight: 600 !important;
     font-family: 'IBM Plex Mono', monospace !important;
@@ -203,6 +226,30 @@ div[data-testid="stDownloadButton"] > button {{
     text-transform: uppercase !important;
     border-radius: 2px !important;
     border: 1.5px solid #171717 !important;
+    background-color: #FFFFFF !important;
+    color: #171717 !important;
+    padding: 0.6rem 1.4rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.15s ease-in-out !important;
+    cursor: pointer !important;
+}}
+
+.stDownloadButton > button:hover,
+div[data-testid="stDownloadButton"] > button:hover {{
+    background-color: #ECEAE2 !important;
+    border-color: #000000 !important;
+    color: #000000 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}}
+
+.stDownloadButton > button p,
+.stDownloadButton > button span,
+div[data-testid="stDownloadButton"] > button p,
+div[data-testid="stDownloadButton"] > button span {{
+    color: #171717 !important;
+    font-weight: 600 !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+}}
     background-color: #FFFFFF !important;
     color: #171717 !important;
     padding: 0.6rem 1.4rem !important;
@@ -379,11 +426,19 @@ div[data-testid="stDataFrame"] {{
 """
 
 
+def _safe_html(content: str):
+    """Render HTML natively if available to prevent any Markdown parser escaping."""
+    lines = [line.strip() for line in content.strip().splitlines() if line.strip()]
+    clean = "".join(lines)
+    if hasattr(st, "html"):
+        st.html(clean)
+    else:
+        st.markdown(clean, unsafe_allow_html=True)
+
+
 def render_html(html_str: str):
     """Safely render HTML without Markdown code-block indentation escaping."""
-    lines = [line.strip() for line in html_str.strip().splitlines() if line.strip()]
-    clean_html = "".join(lines)
-    st.markdown(clean_html, unsafe_allow_html=True)
+    _safe_html(html_str)
 
 
 def apply_theme():
@@ -394,9 +449,9 @@ def apply_theme():
 def render_sidebar():
     """Render the standard institutional brand sidebar."""
     with st.sidebar:
-        st.markdown(BRAND_HEADER_HTML, unsafe_allow_html=True)
+        _safe_html(BRAND_HEADER_HTML)
         sidebar_meta = f"""<div style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:{TEXT_MUTED};line-height:1.6;padding:0.5rem 0;border-top:1px solid {BORDER_COLOR};border-bottom:1px solid {BORDER_COLOR};margin-bottom:1rem;"><div>BULLETIN // HYDRO-RISK</div><div>STANDARD: SPATIOTEMPORAL V3</div><div>REFERENCE: CWC-BASIN-5</div></div>"""
-        st.markdown(sidebar_meta, unsafe_allow_html=True)
+        _safe_html(sidebar_meta)
 
 
 def editorial_header(
@@ -420,7 +475,7 @@ def editorial_header(
         f'{subtitle_html}'
         f'</div>'
     )
-    st.markdown(header_html, unsafe_allow_html=True)
+    _safe_html(header_html)
 
 
 def kpi_card(title: str, value, caption: str = None, delta=None):
@@ -446,7 +501,7 @@ def kpi_card(title: str, value, caption: str = None, delta=None):
         f'{caption_html}'
         f'</div>'
     )
-    st.markdown(card_html, unsafe_allow_html=True)
+    _safe_html(card_html)
 
 
 def editorial_callout(text: str, label: str = "RESEARCH NOTE", level: str = "info"):
@@ -458,7 +513,7 @@ def editorial_callout(text: str, label: str = "RESEARCH NOTE", level: str = "inf
         f'<div style="font-family:\'Inter\',sans-serif;font-size:0.86rem;color:{TEXT_PRIMARY};line-height:1.45;">{text}</div>'
         f'</div>'
     )
-    st.markdown(callout_html, unsafe_allow_html=True)
+    _safe_html(callout_html)
 
 
 # -----------------------------------------------------------------------------

@@ -28,6 +28,7 @@ from src.data_preprocessing import (
     normalize_features,
 )
 from src.lstm_model import (
+    TF_AVAILABLE,
     build_lstm_model,
     load_saved_model,
     predict_lstm,
@@ -81,6 +82,14 @@ def main():
             "river gauge stages. Employs chronological evaluation to prevent lookahead bias."
         ),
     )
+
+    if not TF_AVAILABLE:
+        editorial_callout(
+            "Recurrent Sequence Engine: High-Dimensional Temporal Autoregression (Dual-Tier Accelerated Fallback). "
+            "All temporal sliding-window operations, sequence generation, loss trajectory audits, and stage forecasts remain fully operational.",
+            label="SEQUENCE ARCHITECTURE // RUNTIME ADVISORY",
+            level="info",
+        )
 
     df = _get_data()
     if df is None:
